@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, CheckCircle2, AlertTriangle, XCircle, Search, ShieldAlert, FileText, ChevronRight, Download } from 'lucide-react';
+import { Play, CheckCircle2, AlertTriangle, XCircle, ShieldAlert, ChevronRight } from 'lucide-react';
 
 export default function AuditScanner({
   fixtures,
@@ -101,7 +101,7 @@ export default function AuditScanner({
           </div>
         </div>
 
-        {/* 4-Engine Visual Pipeline Stepper */}
+        {/* 4-Engine Stepper */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginTop: '16px' }}>
           <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--accent-cyan)' : 'var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
@@ -141,7 +141,7 @@ export default function AuditScanner({
         </div>
       </div>
 
-      {/* Audit Verdict Banner & Metric Cards */}
+      {/* Metric Cards */}
       <div className="grid-4">
         <div className="glass-panel" style={{ padding: '20px' }}>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>Security Verdict</div>
@@ -176,14 +176,14 @@ export default function AuditScanner({
         </div>
       </div>
 
-      {/* Findings Explorer with Filter Controls */}
+      {/* Findings Explorer */}
       <div className="glass-panel" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 700 }}>
               Detected Findings Log ({filteredFindings.length})
             </h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Click finding to inspect cryptographic evidence</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Click finding to inspect evidence</span>
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -275,7 +275,7 @@ export default function AuditScanner({
         )}
       </div>
 
-      {/* Detailed Finding Modal / Drawer */}
+      {/* Modal / Drawer */}
       {selectedFinding && (
         <div style={{
           position: 'fixed',

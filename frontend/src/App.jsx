@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import AuditScanner from './components/AuditScanner';
-import BaselineDiffViewer from './components/BaselineDiffViewer';
-import RugpullWatcher from './components/RugpullWatcher';
-import ScorecardMatrix from './components/ScorecardMatrix';
-import SystemHealth from './components/SystemHealth';
+import BaselineDiffViewer from './features/diff/BaselineDiffViewer';
+import AuditScanner from './features/scanner/AuditScanner';
+import RugpullWatcher from './features/watcher/RugpullWatcher';
+import ScorecardMatrix from './features/scorecard/ScorecardMatrix';
+import SystemHealth from './features/telemetry/SystemHealth';
+import { api } from './services/api';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('audit');
+  const [activeTab, setActiveTab] = useState('diff');
   const [systemStatus, setSystemStatus] = useState(null);
   const [fixtures, setFixtures] = useState([]);
-  const [selectedTarget, setSelectedTarget] = useState('fixtures/poisoned_weather');
+  const [selectedTarget, setSelectedTarget] = useState('fixtures/rugpull_suite');
   const [auditReport, setAuditReport] = useState(null);
   const [isAuditing, setIsAuditing] = useState(false);
 

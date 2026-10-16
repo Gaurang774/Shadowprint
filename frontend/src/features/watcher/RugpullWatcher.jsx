@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, AlertOctagon, CheckCircle2, Flame, RotateCcw, Activity } from 'lucide-react';
+import { Eye, AlertOctagon, Flame, RotateCcw } from 'lucide-react';
+import { api } from '../../services/api';
 
 export default function RugpullWatcher() {
   const [isWatching, setIsWatching] = useState(true);
@@ -9,30 +10,26 @@ export default function RugpullWatcher() {
   const [alertData, setAlertData] = useState(null);
   const [detectionLatency, setDetectionLatency] = useState(null);
 
-  // Poll live diff every 2 seconds when watching
   useEffect(() => {
     if (!isWatching) return;
 
     const interval = setInterval(async () => {
       const startTime = performance.now();
       try {
-        const res = await fetch('/api/diff/rugpull_suite');
+        const data = await api.getDiff('rugpull_suite');
         const elapsed = (performance.now() - startTime).toFixed(1);
         setLastCheckTime(Date.now());
 
-        if (res.ok) {
-          const data = await res.json();
-          if (data.has_drift) {
-            setAlertTriggered(true);
-            setAlertData(data);
-            setDetectionLatency(elapsed);
-          } else {
-            setAlertTriggered(false);
-            setAlertData(null);
-          }
+        if (data.has_drift) {
+          setAlertTriggered(true);
+          setAlertData(data);
+          setDetectionLatency(elapsed);
+        } else {
+          setAlertTriggered(false);
+          setAlertData(null);
         }
       } catch (e) {
-        // Silent catch during poll
+        // Heartbeat poll
       }
     }, 2000);
 
@@ -41,15 +38,8 @@ export default function RugpullWatcher() {
 
   const handleToggleFlag = async (activeState) => {
     try {
-      const res = await fetch('/api/trigger-rugpull', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ active: activeState }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setFlagActive(data.active);
-      }
+      const data = await api.toggleRugpullFlag(activeState);
+      setFlagActive(data.active);
     } catch (e) {
       console.error("Failed to toggle flag", e);
     }

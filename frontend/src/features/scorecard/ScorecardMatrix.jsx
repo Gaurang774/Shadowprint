@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Award, CheckCircle2, Play, AlertTriangle, ShieldCheck, Cpu } from 'lucide-react';
+import { Award, CheckCircle2, Play } from 'lucide-react';
+import { api } from '../../services/api';
 
 export default function ScorecardMatrix() {
   const [scorecardData, setScorecardData] = useState(null);
@@ -8,11 +9,8 @@ export default function ScorecardMatrix() {
   const fetchScorecard = async () => {
     setRunning(true);
     try {
-      const res = await fetch('/api/scorecard');
-      if (res.ok) {
-        const data = await res.json();
-        setScorecardData(data);
-      }
+      const data = await api.getScorecard();
+      setScorecardData(data);
     } catch (e) {
       console.error("Scorecard fetch failed", e);
     } finally {

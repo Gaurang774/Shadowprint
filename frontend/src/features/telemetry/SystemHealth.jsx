@@ -1,5 +1,5 @@
 import React from 'react';
-import { Server, Box, Cpu, Database, CheckCircle2, ShieldCheck, Terminal, Layers } from 'lucide-react';
+import { Box, Cpu, Database } from 'lucide-react';
 
 export default function SystemHealth({ systemStatus }) {
   const docker = systemStatus?.docker || {};
