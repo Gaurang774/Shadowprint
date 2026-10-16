@@ -148,8 +148,15 @@ To ensure 100% seamless merges at Phase 3 and Phase 5 with **ZERO Git merge conf
 ## 🎖️ Pre-Final Round 1 Evaluation Defense Status (Ready)
 
 - [x] **Universal Frozen Contract Adherence:** Zero modifications to `shadowprint/models.py`. Both builders integrated seamlessly without schema friction.
-- [x] **Full Unit & Integration Suite (`pytest tests/ -v`):** 38 passed, 1 skipped in 26.83s (100% core pass rate).
-- [x] **Automated Benchmark Scorecard (`scripts/test_manifest.py`):** 7/7 active fixtures passed with 100% Core Recall and 0 False Positives.
+- [x] **Full Unit & Integration Suite (`pytest tests/ -v`):** 46 passed, 1 skipped in 57.10s (100% core pass rate, including comprehensive `tests/test_cli_pipeline.py`).
+- [x] **Unified CLI Command-Line Interface (`shadowprint/cli.py`):**
+  1. `shadowprint audit <path>`: Orchestrates S0 static AST/secrets, S1 prompt/TAG inspection, S2 dynamic prober, S3 baseline drift check, clustered normalization, Rich terminal summary, and dual Markdown + SARIF 2.1.0 exports.
+  2. `shadowprint approve <path>`: Takes live tool snapshot, computes 3-layer SHA-256 baseline fingerprints, and stores approved pins in SQLite (`shadowprint.db`).
+  3. `shadowprint pins`: Displays all active cryptographic baseline pins in an executive terminal table.
+  4. `shadowprint watch <path>`: Monitors live MCP server over stdio at 2s intervals, raising sub-1.5s red alerts with escaped DeepDiff evidence upon schema mutation.
+  5. `shadowprint scorecard`: Native CLI command executing the 7-fixture benchmark recall evaluation.
+  6. `shadowprint info`: Executive summary showing PS02 problem statement, 50/50 dual-builder attribution, and 100% offline airgapped guarantees.
+- [x] **Automated Benchmark Scorecard (`scripts/test_manifest.py` & `shadowprint scorecard`):** 7/7 active fixtures passed with 100% Core Recall and 0 False Positives.
 - [x] **Interactive Live Exploit Demonstrator (`scripts/manual_demo.py all`):**
   1. Live Rug-Pull schema mutation caught with Unicode TAG visual unmasking (`[U+E0001 UNICODE-TAG]`).
   2. Covert canary exfiltration in Markdown image telemetry intercepted.
@@ -157,4 +164,4 @@ To ensure 100% seamless merges at Phase 3 and Phase 5 with **ZERO Git merge conf
 - [x] **Dual Enterprise Reporting Exporters:**
   1. Human-readable Markdown reports (`output/shadowprint_report_*.md`).
   2. Official OASIS SARIF 2.1.0 standard schema compliance (`output/shadowprint_report_*.sarif`).
-- [x] **Git Mainline Health:** Both `main` and `feat/jasjyot` synchronized with GitHub remote `origin/main` (commit `f93bb78`).
+- [x] **Git Mainline Health:** Both `main` and `feat/jasjyot` synchronized with GitHub remote `origin/main`.
