@@ -29,20 +29,22 @@ STATUS_COLORS = {
 }
 
 
-def render_banner():
+def render_banner(target_console: Optional[Console] = None):
     """Prints the official Shadowprint banner."""
+    c = target_console or console
     banner_text = Text()
     banner_text.append(" SHADOWPRINT ", style="bold white on blue")
     banner_text.append(" — Model Context Protocol Security Auditor\n", style="bold cyan")
     banner_text.append("  Every server leaves a trace. 100% Offline & Airgapped.", style="dim")
-    console.print(Panel(banner_text, box=box.ROUNDED, border_style="blue"))
+    c.print(Panel(banner_text, box=box.ROUNDED, border_style="blue"))
 
 
-def render_audit_report(report: AuditReport):
+def render_audit_report(report: AuditReport, target_console: Optional[Console] = None):
     """
     Renders the complete audit report to standard output using Rich tables and panels.
     """
-    render_banner()
+    c = target_console or console
+    render_banner(target_console=c)
 
     # 1. Header Overview Panel
     status_style = STATUS_COLORS.get(report.status, "bold white")
@@ -63,11 +65,11 @@ def render_audit_report(report: AuditReport):
         f"[bold red]{crit_count} Critical[/bold red] | [red]{high_count} High[/red] | [yellow]{med_count} Medium[/yellow] | [cyan]{low_count} Low[/cyan]"
     )
 
-    console.print(Panel(overview_table, title="[bold]Audit Summary[/bold]", border_style="cyan", box=box.ROUNDED))
+    c.print(Panel(overview_table, title="[bold]Audit Summary[/bold]", border_style="cyan", box=box.ROUNDED))
 
     # 2. Findings Detail Table
     if not report.findings:
-        console.print(Panel("[bold green][PASS] 0 Findings Detected. Target server passed all security gates![/bold green]", border_style="green"))
+        c.print(Panel("[bold green][PASS] 0 Findings Detected. Target server passed all security gates![/bold green]", border_style="green"))
         return
 
     findings_table = Table(
@@ -106,5 +108,17 @@ def render_audit_report(report: AuditReport):
             evidence_text
         )
 
-    console.print(findings_table)
-    console.print()
+    c.print(findings_table)
+    c.print()
+
+
+def format_audit_report_text(report: AuditReport) -> str:
+    """Renders the audit report to a plain ASCII terminal string matching the CLI output."""
+    import io
+    buf = io.StringIO()
+    text_console = Console(file=buf, no_color=True, width=100, force_terminal=False)
+    render_audit_report(report, target_console=text_console)
+    buf.write("Audit reports exported:\n")
+    buf.write(f"  * Markdown: output/shadowprint_report_{report.target}.md\n")
+    buf.write(f"  * SARIF:    output/shadowprint_report_{report.target}.sarif\n")
+    return buf.getvalue()

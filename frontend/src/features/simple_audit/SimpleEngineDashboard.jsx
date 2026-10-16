@@ -2,6 +2,9 @@ import React from 'react';
 import { CheckCircle2, XCircle, AlertTriangle, Shield, Code, MessageSquare, Terminal, Key } from 'lucide-react';
 
 export default function SimpleEngineDashboard({ auditReport, isAuditing, selectedTarget }) {
+  const [viewMode, setViewMode] = React.useState('cards'); // 'cards' | 'cli'
+  const [copied, setCopied] = React.useState(false);
+
   const findings = auditReport?.findings || [];
   const status = auditReport?.status || 'IDLE';
   const target = auditReport?.target || selectedTarget;
@@ -68,13 +71,123 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
         </div>
       </div>
 
-      {/* The 4 Engines: Direct Input -> Process -> Output Cards */}
-      <div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>
-          How the 4 Engines Work & What Each Engine Outputs:
+      {/* View Switcher: 4-Engine Cards vs CLI Terminal Response */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+          {viewMode === 'cards' ? 'How the 4 Engines Work & What Each Engine Outputs:' : 'CLI Terminal Response (shadowprint audit):'}
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+          <button
+            onClick={() => setViewMode('cards')}
+            style={{
+              padding: '6px 14px',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              borderRadius: '4px',
+              border: 'none',
+              background: viewMode === 'cards' ? '#ffffff' : 'transparent',
+              color: viewMode === 'cards' ? '#0f172a' : '#64748b',
+              boxShadow: viewMode === 'cards' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Shield size={14} /> 4-Engine Cards
+          </button>
+          <button
+            onClick={() => setViewMode('cli')}
+            style={{
+              padding: '6px 14px',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              borderRadius: '4px',
+              border: 'none',
+              background: viewMode === 'cli' ? '#ffffff' : 'transparent',
+              color: viewMode === 'cli' ? '#0f172a' : '#64748b',
+              boxShadow: viewMode === 'cli' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Terminal size={14} /> CLI Response
+          </button>
+        </div>
+      </div>
+
+      {viewMode === 'cli' ? (
+        /* Full CLI Terminal View */
+        <div style={{
+          background: '#0f172a',
+          color: '#f8fafc',
+          borderRadius: '8px',
+          border: '1px solid #334155',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden'
+        }}>
+          {/* Terminal Titlebar */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            background: '#1e293b',
+            padding: '10px 16px',
+            borderBottom: '1px solid #334155'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444' }} />
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }} />
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981' }} />
+              <span style={{ fontSize: '0.8rem', color: '#cbd5e1', fontFamily: 'var(--font-mono)', marginLeft: '8px' }}>
+                shadowprint audit fixtures/{target}
+              </span>
+            </div>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(`shadowprint audit fixtures/${target}`);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              style={{
+                fontSize: '0.75rem',
+                padding: '4px 10px',
+                background: '#334155',
+                color: '#f8fafc',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              {copied ? '✓ Copied' : 'Copy CLI Command'}
+            </button>
+          </div>
+
+          {/* Terminal Body */}
+          <pre style={{
+            margin: 0,
+            padding: '16px 20px',
+            fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+            fontSize: '0.82rem',
+            lineHeight: '1.45',
+            color: '#e2e8f0',
+            overflowX: 'auto',
+            whiteSpace: 'pre',
+            maxHeight: '520px'
+          }}>
+            {auditReport?.cli_output || (
+              `$ shadowprint audit fixtures/${target}\n\n[Evaluating server across Engines S0-S3...]\nStatus: ${status}\nIssues Caught: ${findings.length}\n`
+            )}
+          </pre>
+        </div>
+      ) : (
+        /* The 4 Engines: Direct Input -> Process -> Output Cards */
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           {/* Engine S0 Card */}
           <div className="glass-panel" style={{ padding: '20px', borderTop: s0Findings.length > 0 ? '3px solid #dc2626' : '3px solid #15803d' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -231,9 +344,8 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Detailed Caught Evidence Log */}
+        {/* Detailed Caught Evidence Log */}
       <div className="glass-panel" style={{ padding: '24px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '16px' }}>
           Detailed Evidence Caught by Engines ({findings.length})
@@ -279,5 +391,7 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
         )}
       </div>
     </div>
+  )}
+</div>
   );
 }

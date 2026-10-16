@@ -29,6 +29,7 @@ from shadowprint.s3_integrity.db import PinDatabase
 from shadowprint.s3_integrity.differ import IntegrityDiffer
 from shadowprint.normalizer import normalize_findings
 from shadowprint.client.mcp_client import GuardedMCPClient
+from shadowprint.s4_reporting.terminal_ui import format_audit_report_text
 
 router = APIRouter(prefix="/api")
 
@@ -238,7 +239,13 @@ async def run_audit(req: AuditRequest) -> Dict[str, Any]:
         },
     )
 
-    return json.loads(report.model_dump_json())
+    report_dict = json.loads(report.model_dump_json())
+    try:
+        report_dict["cli_output"] = format_audit_report_text(report)
+    except Exception as e:
+        report_dict["cli_output"] = f"[Error formatting CLI output: {e}]"
+
+    return report_dict
 
 
 @router.get("/pins")
