@@ -28,16 +28,16 @@ export default function ScorecardMatrix() {
   const totalCount = scorecardData?.total_fixtures ?? 7;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Top Banner */}
       <div className="glass-panel" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.4rem', fontWeight: 700 }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>
               Benchmark Recall Matrix & Ground Truth Validator
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              Validates all 7 test fixtures against <code style={{ color: '#38bdf8' }}>shadowprint_fixture_manifest.json</code> to prove zero false positives and 100% vulnerability recall.
+              Validates all 7 test fixtures against <code>shadowprint_fixture_manifest.json</code> to prove zero false positives and 100% vulnerability recall.
             </p>
           </div>
 
@@ -45,9 +45,9 @@ export default function ScorecardMatrix() {
             className="btn btn-primary"
             onClick={fetchScorecard}
             disabled={running}
-            style={{ padding: '10px 20px' }}
+            style={{ padding: '8px 18px' }}
           >
-            <Play size={16} fill="currentColor" />
+            <Play size={15} fill="currentColor" />
             <span>{running ? 'Evaluating Suite...' : 'Re-Run Scorecard'}</span>
           </button>
         </div>
@@ -56,10 +56,10 @@ export default function ScorecardMatrix() {
       {/* Metric Cards */}
       <div className="grid-3">
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '6px' }}>
             Core Recall Rate
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#34d399' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#15803d' }}>
             {recallRate}%
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -68,10 +68,10 @@ export default function ScorecardMatrix() {
         </div>
 
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '6px' }}>
             Verified Passing Fixtures
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#38bdf8' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a' }}>
             {passedCount} / {totalCount}
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -80,10 +80,10 @@ export default function ScorecardMatrix() {
         </div>
 
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '6px' }}>
             False Positive Guarantee
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#10b981' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#15803d' }}>
             0 False Positives
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -94,11 +94,11 @@ export default function ScorecardMatrix() {
 
       {/* 7-Fixture Result Table */}
       <div className="glass-panel" style={{ padding: '24px' }}>
-        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 700, marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '16px' }}>
           Fixture Ground Truth Validation Table
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {results.map((res) => {
             const isClean = res.name.startsWith('clean_');
             return (
@@ -109,15 +109,14 @@ export default function ScorecardMatrix() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '16px 20px',
-                  borderColor: res.passed ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.4)',
+                  padding: '14px 18px',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <CheckCircle2 size={22} color="#10b981" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <CheckCircle2 size={20} color="#15803d" />
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <strong style={{ fontSize: '0.98rem', color: '#f8fafc', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <strong style={{ fontSize: '0.92rem', color: '#0f172a', fontFamily: 'var(--font-mono)' }}>
                         {res.name}
                       </strong>
                       <span className={`badge ${isClean ? 'badge-pass' : 'badge-fail'}`}>
@@ -127,15 +126,15 @@ export default function ScorecardMatrix() {
                         Actual: {res.actual_outcome}
                       </span>
                     </div>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                       {res.details}
                     </div>
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
-                  <span className="badge badge-pass" style={{ fontSize: '0.8rem', padding: '6px 14px' }}>
-                    [PASS 100%]
+                  <span className="badge badge-pass">
+                    PASS 100%
                   </span>
                 </div>
               </div>

@@ -70,14 +70,9 @@ export default function AuditScanner({
               value={selectedTarget}
               onChange={(e) => setSelectedTarget(e.target.value)}
               style={{
-                background: '#0d1322',
-                color: '#ffffff',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '10px 16px',
+                padding: '8px 14px',
                 fontSize: '0.875rem',
                 minWidth: '280px',
-                fontFamily: 'var(--font-mono)'
               }}
             >
               <optgroup label="Pre-Packaged Fixtures">
@@ -190,14 +185,7 @@ export default function AuditScanner({
             <select
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value)}
-              style={{
-                background: '#0d1322',
-                color: '#ffffff',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-              }}
+              style={{ padding: '6px 10px', fontSize: '0.8rem' }}
             >
               <option value="ALL">All Severities</option>
               <option value="CRITICAL">Critical</option>
@@ -209,14 +197,7 @@ export default function AuditScanner({
             <select
               value={engineFilter}
               onChange={(e) => setEngineFilter(e.target.value)}
-              style={{
-                background: '#0d1322',
-                color: '#ffffff',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-              }}
+              style={{ padding: '6px 10px', fontSize: '0.8rem' }}
             >
               <option value="ALL">All Engines</option>
               <option value="S0">S0 Static</option>
@@ -254,7 +235,7 @@ export default function AuditScanner({
                   </div>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <strong style={{ fontSize: '0.92rem', color: '#f8fafc' }}>{finding.category}</strong>
+                      <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>{finding.category}</strong>
                       {getSeverityBadge(finding.severity)}
                       {finding.tool && (
                         <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
@@ -316,7 +297,7 @@ export default function AuditScanner({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="glass-card">
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Claim vs Observed Evidence</div>
-                <div style={{ fontSize: '0.88rem', color: '#f8fafc', marginBottom: '8px' }}>
+                <div style={{ fontSize: '0.88rem', color: '#0f172a', marginBottom: '8px' }}>
                   <strong>Declared Claim:</strong> {selectedFinding.claim || 'Server claimed benign capability.'}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Evidence Quote / Syscall Log:</div>

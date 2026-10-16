@@ -8,10 +8,10 @@ export default function SystemHealth({ systemStatus }) {
   const engines = systemStatus?.engines || [];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Top Banner */}
       <div className="glass-panel" style={{ padding: '24px' }}>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.4rem', fontWeight: 700 }}>
+        <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>
           Engines, Docker Sandbox & Integration Architecture
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
@@ -22,107 +22,107 @@ export default function SystemHealth({ systemStatus }) {
       {/* 3 Infrastructure Pillar Cards */}
       <div className="grid-3">
         {/* Docker Sandbox */}
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Box size={24} color="#06b6d4" />
+        <div className="glass-panel" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+            <Box size={22} color="#0f172a" />
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Docker Sandbox</h3>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>Docker Sandbox</h3>
               <span className={`badge ${docker.daemon_running ? 'badge-pass' : 'badge-info'}`}>
                 {docker.daemon_running ? 'DAEMON ONLINE' : 'CONTAINER HOST'}
               </span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.84rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Image Name:</span>
-              <code style={{ color: '#38bdf8' }}>{docker.image_name}</code>
+              <code>{docker.image_name}</code>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Kernel Tracing:</span>
-              <strong style={{ color: '#34d399' }}>Linux strace (openat, connect, execve)</strong>
+              <strong style={{ color: '#15803d' }}>Linux strace (openat, connect, execve)</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Canary Secret:</span>
-              <code style={{ color: '#fbbf24' }}>/tmp/canary_creds.env</code>
+              <code>/tmp/canary_creds.env</code>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Silent Egress Sink:</span>
-              <code style={{ color: '#a78bfa' }}>127.0.0.1:8080/sink</code>
+              <code>127.0.0.1:8080/sink</code>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Isolation Flags:</span>
-              <span style={{ color: '#e2e8f0', fontSize: '0.75rem' }}>--network none --cap-add=SYS_PTRACE</span>
+              <span style={{ color: '#475569', fontSize: '0.75rem' }}>--network none --cap-add=SYS_PTRACE</span>
             </div>
           </div>
         </div>
 
         {/* Ollama Local AI */}
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Cpu size={24} color="#8b5cf6" />
+        <div className="glass-panel" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+            <Cpu size={22} color="#0f172a" />
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Local AI Judge</h3>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>Local AI Judge</h3>
               <span className={`badge ${ollama.online ? 'badge-pass' : 'badge-info'}`}>
                 {ollama.online ? 'OLLAMA READY' : 'OFFLINE GUARANTEE'}
               </span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.84rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Endpoint:</span>
-              <code style={{ color: '#38bdf8' }}>{ollama.endpoint}</code>
+              <code>{ollama.endpoint}</code>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Open-Weight Model:</span>
-              <strong style={{ color: '#a78bfa' }}>Qwen3-4B / Qwen3-8B</strong>
+              <strong style={{ color: '#0f172a' }}>Qwen3-4B / Qwen3-8B</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Inference Authority:</span>
-              <strong style={{ color: '#34d399' }}>Add-Only (Cannot clear S1 flags)</strong>
+              <strong style={{ color: '#15803d' }}>Add-Only (Cannot clear S1 flags)</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Steganography:</span>
-              <span style={{ color: '#38bdf8' }}>Plane 14 Unicode Tag Detector</span>
+              <span>Plane 14 Unicode Tag Detector</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Cloud Dependency:</span>
-              <strong style={{ color: '#34d399' }}>0.0% (100% Offline Airgapped)</strong>
+              <strong style={{ color: '#15803d' }}>0.0% (100% Offline Airgapped)</strong>
             </div>
           </div>
         </div>
 
         {/* SQLite Database */}
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Database size={24} color="#10b981" />
+        <div className="glass-panel" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+            <Database size={22} color="#0f172a" />
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Cryptographic Store</h3>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>Cryptographic Store</h3>
               <span className="badge badge-pass">SQLITE 3</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.84rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Database File:</span>
-              <code style={{ color: '#38bdf8' }}>shadowprint.db</code>
+              <code>shadowprint.db</code>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Pinned Baselines:</span>
-              <strong style={{ color: '#34d399' }}>{db.pinned_servers_count} Servers</strong>
+              <strong style={{ color: '#0f172a' }}>{db.pinned_servers_count} Servers</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Hashing Algorithm:</span>
-              <strong style={{ color: '#38bdf8' }}>3-Layer SHA-256</strong>
+              <strong>3-Layer SHA-256</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Diff Engine:</span>
-              <span style={{ color: '#e2e8f0' }}>DeepDiff with Character Escaping</span>
+              <span>DeepDiff with Character Escaping</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Storage Mode:</span>
-              <span style={{ color: '#34d399' }}>Persistent ACID Local DB</span>
+              <span style={{ color: '#15803d' }}>Persistent ACID Local DB</span>
             </div>
           </div>
         </div>
@@ -130,28 +130,28 @@ export default function SystemHealth({ systemStatus }) {
 
       {/* Integration-Ready Engine Modular Topology */}
       <div className="glass-panel" style={{ padding: '24px' }}>
-        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 700, marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '16px' }}>
           Modular Integration Topology
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
           {engines.map((eng) => (
             <div key={eng.id} className="glass-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <span className="badge badge-info">{eng.id}</span>
                 <span className="badge badge-pass">{eng.status}</span>
               </div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f8fafc', marginBottom: '6px' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0f172a', marginBottom: '4px' }}>
                 {eng.name}
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' }}>
                 {eng.tools.map((t, idx) => (
                   <span key={idx} style={{
                     fontSize: '0.72rem',
-                    background: 'rgba(255,255,255,0.06)',
-                    padding: '2px 8px',
+                    background: '#f1f5f9',
+                    padding: '2px 6px',
                     borderRadius: '4px',
-                    color: '#cbd5e1'
+                    color: '#334155'
                   }}>
                     {t}
                   </span>

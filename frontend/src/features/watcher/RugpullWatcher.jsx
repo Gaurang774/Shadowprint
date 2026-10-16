@@ -46,24 +46,22 @@ export default function RugpullWatcher() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Showstopper Live Banner */}
-      <div className={`glass-panel ${alertTriggered ? 'siren-alert' : ''}`} style={{ padding: '28px', transition: 'all 0.3s ease' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Live Banner */}
+      <div className={`glass-panel ${alertTriggered ? 'siren-alert' : ''}`} style={{ padding: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
-              background: alertTriggered ? '#ef4444' : '#10b981',
-              borderRadius: '12px',
-              padding: '12px',
+              background: alertTriggered ? '#dc2626' : '#0f172a',
+              borderRadius: '6px',
+              padding: '10px',
               display: 'flex',
-              boxShadow: alertTriggered ? '0 0 25px rgba(239, 68, 68, 0.6)' : '0 0 15px rgba(16, 185, 129, 0.3)',
-              transition: 'all 0.3s'
             }}>
-              {alertTriggered ? <AlertOctagon size={32} color="#ffffff" /> : <Eye size={32} color="#ffffff" />}
+              {alertTriggered ? <AlertOctagon size={24} color="#ffffff" /> : <Eye size={24} color="#ffffff" />}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', fontWeight: 800 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>
                   {alertTriggered ? 'CRITICAL RUG-PULL DETECTED!' : 'Live Integrity Watcher (2s Polling)'}
                 </h2>
                 <span className={`badge ${alertTriggered ? 'badge-critical' : 'badge-pass'}`}>
@@ -77,23 +75,22 @@ export default function RugpullWatcher() {
           </div>
 
           {/* Interactive Trigger Controls */}
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {!flagActive ? (
               <button
                 className="btn btn-danger"
                 onClick={() => handleToggleFlag(true)}
-                style={{ padding: '12px 22px', fontSize: '0.95rem', fontWeight: 700 }}
               >
-                <Flame size={18} />
+                <Flame size={15} />
                 <span>Simulate Touch Flag (/tmp/rugpull_trigger.flag)</span>
               </button>
             ) : (
               <button
                 className="btn btn-outline"
                 onClick={() => handleToggleFlag(false)}
-                style={{ padding: '12px 22px', borderColor: '#10b981', color: '#34d399' }}
+                style={{ borderColor: '#16a34a', color: '#16a34a' }}
               >
-                <RotateCcw size={18} />
+                <RotateCcw size={15} />
                 <span>Reset to Benign State (Delete Flag)</span>
               </button>
             )}
@@ -104,10 +101,10 @@ export default function RugpullWatcher() {
       {/* Real-time Telemetry Cards */}
       <div className="grid-3">
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '6px' }}>
             Heartbeat Frequency
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#38bdf8' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>
             2.0 Seconds
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -116,22 +113,22 @@ export default function RugpullWatcher() {
         </div>
 
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '6px' }}>
             Trigger Flag State
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: 800, color: flagActive ? '#ef4444' : '#10b981' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: flagActive ? '#dc2626' : '#15803d' }}>
             {flagActive ? 'ACTIVE (TRIGGERED)' : 'INACTIVE (BENIGN)'}
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Path: <code style={{ color: '#38bdf8' }}>/tmp/rugpull_trigger.flag</code>
+            Path: <code>/tmp/rugpull_trigger.flag</code>
           </div>
         </div>
 
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '6px' }}>
             Detection Response Latency
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: 800, color: alertTriggered ? '#f59e0b' : '#34d399' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: alertTriggered ? '#dc2626' : '#15803d' }}>
             {alertTriggered ? `< ${detectionLatency || 1.2}s` : 'Sub-1.5s Guarantee'}
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -142,32 +139,32 @@ export default function RugpullWatcher() {
 
       {/* Mutated Schema Evidence Window */}
       {alertTriggered && alertData && (
-        <div className="glass-panel" style={{ padding: '24px', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-            <AlertOctagon size={22} color="#ef4444" />
-            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 700, color: '#f87171' }}>
+        <div className="glass-panel" style={{ padding: '24px', borderColor: '#fca5a5', background: '#fef2f2' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <AlertOctagon size={20} color="#dc2626" />
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#991b1b' }}>
               Intercepted Mid-Session Tool Definition Mutation
             </h3>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div className="glass-card" style={{ background: 'rgba(0,0,0,0.4)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div className="glass-card" style={{ background: '#ffffff' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
                 Definition Hash Divergence
               </div>
-              <div style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>
-                <div>Pinned Baseline: <span style={{ color: '#34d399' }}>{alertData.pinned_definition_hash}</span></div>
-                <div>Live Mutated:    <span style={{ color: '#f87171' }}>{alertData.live_definition_hash}</span></div>
+              <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: '#334155' }}>
+                <div>Pinned Baseline: <span style={{ color: '#15803d' }}>{alertData.pinned_definition_hash}</span></div>
+                <div>Live Mutated:    <span style={{ color: '#dc2626' }}>{alertData.live_definition_hash}</span></div>
               </div>
             </div>
 
             {alertData.findings && alertData.findings.map((f, i) => (
-              <div key={i} className="glass-card" style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+              <div key={i} className="glass-card" style={{ borderColor: '#fca5a5', background: '#ffffff' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <strong style={{ color: '#f87171', fontSize: '0.9rem' }}>{f.category}</strong>
+                  <strong style={{ color: '#991b1b', fontSize: '0.9rem' }}>{f.category}</strong>
                   <span className="badge badge-critical">{f.severity}</span>
                 </div>
-                <pre className="code-box" style={{ whiteSpace: 'pre-wrap', color: '#fca5a5' }}>
+                <pre className="code-box" style={{ background: '#fef2f2', color: '#b91c1c' }}>
                   {f.evidence}
                 </pre>
               </div>

@@ -9,14 +9,14 @@ export default function Header({ activeTab, setActiveTab, systemStatus, onQuickA
     <header className="header-nav">
       <div className="brand-badge">
         <div style={{
-          background: '#2563eb',
-          borderRadius: '6px',
+          background: '#0f172a',
+          borderRadius: '4px',
           padding: '6px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-          <Shield size={20} color="#ffffff" />
+          <Shield size={18} color="#ffffff" />
         </div>
         <div>
           <div className="brand-title">SHADOWPRINT</div>
@@ -67,21 +67,21 @@ export default function Header({ activeTab, setActiveTab, systemStatus, onQuickA
         </button>
       </nav>
 
-      {/* System Status Pills */}
+      {/* Clean Status Pills */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div className="glass-card" style={{ padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem' }}>
+        <div className="glass-card" style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem' }}>
           <span className={`pulse-dot ${dockerOnline ? 'green' : 'cyan'}`}></span>
           <span style={{ color: 'var(--text-secondary)' }}>Docker:</span>
-          <strong style={{ color: dockerOnline ? '#34d399' : '#60a5fa' }}>
-            {dockerOnline ? 'SANDBOX READY' : 'CONTAINER'}
+          <strong style={{ color: dockerOnline ? '#15803d' : '#0f172a' }}>
+            {dockerOnline ? 'ONLINE' : 'HOST'}
           </strong>
         </div>
 
-        <div className="glass-card" style={{ padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem' }}>
+        <div className="glass-card" style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem' }}>
           <span className={`pulse-dot ${ollamaOnline ? 'green' : 'cyan'}`}></span>
           <span style={{ color: 'var(--text-secondary)' }}>Qwen3 AI:</span>
-          <strong style={{ color: ollamaOnline ? '#34d399' : '#60a5fa' }}>
-            {ollamaOnline ? 'LOCAL (11434)' : 'OFFLINE JUDGE'}
+          <strong style={{ color: ollamaOnline ? '#15803d' : '#0f172a' }}>
+            {ollamaOnline ? 'LOCAL' : 'OFFLINE'}
           </strong>
         </div>
 
