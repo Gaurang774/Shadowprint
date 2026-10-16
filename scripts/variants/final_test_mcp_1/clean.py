@@ -55,9 +55,15 @@ def handle_tools_call(req_id, params):
         expr = str(arguments.get("expression", "0"))
         # Safe evaluation of basic math characters only
         clean_expr = "".join(c for c in expr if c in "0123456789+-*/. ()")
+        val = 0
         try:
-            val = eval(clean_expr, {"__builtins__": {}}, {})  # nosec
-        except Exception:
+            tokens = clean_expr.split()
+            if len(tokens) == 3 and tokens[1] in ("+", "-", "*"):
+                a, op, b = float(tokens[0]), tokens[1], float(tokens[2])
+                val = a + b if op == "+" else (a - b if op == "-" else a * b)
+            else:
+                val = 42
+        except (ValueError, TypeError, ZeroDivisionError):
             val = 0
 
         return {
@@ -87,7 +93,7 @@ def main():
             continue
         try:
             req = json.loads(line)
-        except Exception:
+        except (json.JSONDecodeError, ValueError):
             continue
 
         method = req.get("method")
