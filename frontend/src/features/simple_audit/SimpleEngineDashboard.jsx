@@ -7,7 +7,13 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
 
   const findings = auditReport?.findings || [];
   const status = auditReport?.status || 'IDLE';
-  const target = auditReport?.target || selectedTarget;
+  // auditReport.target is the server directory name (e.g. "poisoned_weather").
+  // selectedTarget is the entrypoint path (e.g. "fixtures/poisoned_weather/server.py").
+  // For display we prefer the clean server name from the report.
+  const serverName = auditReport?.target
+    || selectedTarget.replace(/^fixtures\//, '').replace(/\/server\.py$/, '').replace(/\/.*$/, '');
+  // CLI command always uses fixtures/{serverName}
+  const cliCommand = `shadowprint audit fixtures/${serverName}`;
 
   // Group findings by Engine
   const s0Findings = findings.filter(f => f.engine === 'S0');
@@ -38,7 +44,7 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
               Target Server Audit Result
             </div>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-mono)' }}>
-              {target}
+              {isAuditing ? <span style={{ color: 'var(--text-muted)' }}>Running audit…</span> : serverName || 'No target selected'}
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>
               Audited across all 4 independent security layers before agent integration.
@@ -143,13 +149,13 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }} />
               <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981' }} />
               <span style={{ fontSize: '0.8rem', color: '#cbd5e1', fontFamily: 'var(--font-mono)', marginLeft: '8px' }}>
-                shadowprint audit fixtures/{target}
+                {cliCommand}
               </span>
             </div>
 
             <button
               onClick={() => {
-                navigator.clipboard.writeText(`shadowprint audit fixtures/${target}`);
+                navigator.clipboard.writeText(cliCommand);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}
@@ -179,9 +185,9 @@ export default function SimpleEngineDashboard({ auditReport, isAuditing, selecte
             whiteSpace: 'pre',
             maxHeight: '520px'
           }}>
-            {auditReport?.cli_output || (
-              `$ shadowprint audit fixtures/${target}\n\n[Evaluating server across Engines S0-S3...]\nStatus: ${status}\nIssues Caught: ${findings.length}\n`
-            )}
+            {isAuditing
+              ? `$ ${cliCommand}\n\n[Running audit engines S0 → S1 → S2 → S3…]\nPlease wait…`
+              : (auditReport?.cli_output || `$ ${cliCommand}\n\n[Evaluating server across Engines S0-S3...]\nStatus: ${status}\nIssues Caught: ${findings.length}\n`)}
           </pre>
         </div>
       ) : (
