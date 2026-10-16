@@ -85,7 +85,10 @@ class IntegrityDiffer:
             live_tools = {t.name: t.model_dump() for t in live_snapshot.tools}
 
             diff = DeepDiff(pinned_tools, live_tools, ignore_order=True)
-            diff_str = escape_hidden_characters(json.dumps(diff.to_dict(), indent=2))
+            try:
+                diff_str = escape_hidden_characters(diff.to_json(indent=2))
+            except Exception:
+                diff_str = escape_hidden_characters(json.dumps(diff.to_dict(), default=str, indent=2))
 
             # Detect added or removed tools
             added_tools = set(live_tools.keys()) - set(pinned_tools.keys())
