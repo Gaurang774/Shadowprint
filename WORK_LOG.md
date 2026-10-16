@@ -80,9 +80,9 @@ All dependencies are installed in `.venv` and pinned in `requirements.txt`:
 ### 3. Local Git Branching Strategy
 * Initial commit created on `main`: `chore: initial project structure and frozen data contracts`.
 * Created local branches:
-  - `feat/jasjyot`: For Jasjyot (JJ) to build S0 static, S1 metadata, normalizer, CLI, and Markdown report.
-  - `feat/gaurang`: For Gaurang to build Docker sandbox, Guarded MCP client, S2 dynamic prober, S3 SQLite integrity watcher, and SARIF exporter.
-* **Confirmed:** Zero commits pushed to GitHub. Working purely locally.
+  - `feat/jasjyot`: For Jasjyot (JJ) to build S0 static, S1 metadata deterministic rules, normalizer, CLI, and all S4 reporting (Markdown, Terminal UI, SARIF 2.1.0).
+  - `feat/gaurang`: For Gaurang to build Docker sandbox, Guarded MCP client, S1 Ollama Qwen3 AI judge, S2 dynamic prober, and S3 SQLite integrity watcher.
+* **Remote Branches:** Published to GitHub (`origin`).
 
 ### 4. Environment & Tooling Sanity Tests
 * **Preflight Script:** Ran `scripts/preflight_check.py`:
