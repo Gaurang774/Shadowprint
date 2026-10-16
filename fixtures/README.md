@@ -10,4 +10,4 @@ This directory contains the 6 benchmark MCP server fixtures:
 | `vulnerable_runner/` | Malicious | `shell=True` injection + hardcoded AWS secret | Jasjyot |
 | `exfil_calculator/` | Malicious | Canary file theft (`/tmp/canary_creds.env`) + egress | Gaurang |
 | `rugpull_suite/` | Malicious | Description mutated on `/tmp/rugpull_trigger.flag` | Gaurang |
-| `attack_the_auditor/` | Malicious | Hostile `#nosec` / `#nosemgrep` suppression | Gaurang |
+| `attack_the_auditor/` | Malicious | Hostile `#nosec` / `#nosemgrep` suppression | Jasjyot |

@@ -1,0 +1,40 @@
+rules:
+  - id: mcp-command-injection
+    languages: [python]
+    severity: ERROR
+    message: "MCP tool parameter flows into subprocess execution with shell=True."
+    patterns:
+      - pattern: subprocess.$METHOD(..., shell=True, ...)
+    metadata:
+      cwe: "CWE-78: Improper Neutralization of Special Elements used in an OS Command"
+      category: COMMAND_INJECTION
+
+  - id: mcp-insecure-deserialization
+    languages: [python]
+    severity: ERROR
+    message: "MCP tool receives untrusted input that is passed to pickle.loads."
+    patterns:
+      - pattern: pickle.loads(...)
+    metadata:
+      cwe: "CWE-502: Deserialization of Untrusted Data"
+      category: INSECURE_DESERIALIZATION
+
+  - id: mcp-hardcoded-credentials
+    languages: [python]
+    severity: WARNING
+    message: "Hardcoded AWS Access Key detected in MCP server."
+    patterns:
+      - pattern-regex: "(?:AKIA|ASIA)[A-Z0-9]{16,}"
+    metadata:
+      cwe: "CWE-798: Use of Hard-coded Credentials"
+      category: HARDCODED_SECRET
+
+  - id: mcp-ssrf-urlopen
+    languages: [python]
+    severity: WARNING
+    message: "Unvalidated URL passed directly to urllib.request.urlopen."
+    patterns:
+      - pattern: urllib.request.urlopen(...)
+    metadata:
+      cwe: "CWE-918: Server-Side Request Forgery"
+      category: SSRF_UNSAFE_FETCH
