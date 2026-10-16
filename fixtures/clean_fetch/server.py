@@ -90,7 +90,7 @@ def main():
             continue
         try:
             req = json.loads(line)
-        except Exception:
+        except json.JSONDecodeError:
             continue
 
         method = req.get("method")

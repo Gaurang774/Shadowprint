@@ -54,6 +54,18 @@ def test_sink_handler_captures_post_request(tmp_path):
     assert "stolen_creds" in content
 
 
+import pytest
+
+
+def _docker_available() -> bool:
+    try:
+        res = subprocess.run(["docker", "info"], capture_output=True, timeout=3)
+        return res.returncode == 0
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not _docker_available(), reason="Docker daemon is not running")
 def test_docker_container_stdio_cleanliness(tmp_path):
     # Test that container outputs strictly pure stdout without strace leakage
     obs_dir = tmp_path / "obs"

@@ -90,13 +90,18 @@ async def evaluate_fixture(fixture_meta: Dict[str, Any]) -> Dict[str, Any]:
                         severity=gr.severity,
                         assessment="FAIL",
                         confidence="confirmed",
-                        evidence_basis="heuristic_signature",
+                        evidence_basis="metadata",
                         claim="Tool declared safe metadata.",
                         evidence=gr.evidence_quote or "Prompt injection detected.",
                         remediation="Sanitize description.",
                         supporting_rules=["S1-GUARD"],
                     )
                 )
+
+        # 2b. S0 Static Inspection Scan (AST, Bandit, Secrets, Hostile Suppressions)
+        from shadowprint.s0_static.scanner import scan_static
+        s0_findings = scan_static(entrypoint.parent)
+        detected_findings.extend(s0_findings)
 
         # 3. Dynamic Tool Invocation & S2 Output Scan
         await client.start()
