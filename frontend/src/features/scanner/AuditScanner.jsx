@@ -103,7 +103,7 @@ export default function AuditScanner({
 
         {/* 4-Engine Stepper */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginTop: '16px' }}>
-          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--accent-cyan)' : 'var(--border-subtle)' }}>
+          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--border-active)' : 'var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>ENGINE S0</span>
               <span className="badge badge-info">AST & RULES</span>
@@ -112,7 +112,7 @@ export default function AuditScanner({
             <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Bandit • AST Taint • Gitleaks</div>
           </div>
 
-          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--accent-cyan)' : 'var(--border-subtle)' }}>
+          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--border-active)' : 'var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>ENGINE S1</span>
               <span className="badge badge-pass">QWEN3 JUDGE</span>
@@ -121,7 +121,7 @@ export default function AuditScanner({
             <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Plane 14 Tag Filter • Add-Only AI</div>
           </div>
 
-          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--accent-cyan)' : 'var(--border-subtle)' }}>
+          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--border-active)' : 'var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>ENGINE S2</span>
               <span className="badge badge-high">SANDBOX</span>
@@ -130,7 +130,7 @@ export default function AuditScanner({
             <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Linux strace • Canary Tripwire</div>
           </div>
 
-          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--accent-cyan)' : 'var(--border-subtle)' }}>
+          <div className="glass-card" style={{ borderColor: isAuditing ? 'var(--border-active)' : 'var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>ENGINE S3</span>
               <span className="badge badge-medium">DIFF PIN</span>

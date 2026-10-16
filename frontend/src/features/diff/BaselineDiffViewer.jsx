@@ -55,26 +55,19 @@ export default function BaselineDiffViewer({ fixtures }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Hero Header: Shadowprint Superpower Differentiator */}
-      <div className="glass-panel" style={{
-        padding: '28px',
-        background: 'linear-gradient(135deg, rgba(16, 24, 43, 0.85) 0%, rgba(6, 182, 212, 0.08) 100%)',
-        border: '1px solid rgba(6, 182, 212, 0.3)',
-        boxShadow: '0 8px 32px rgba(6, 182, 212, 0.15)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+      {/* Clean Header */}
+      <div className="glass-panel" style={{ padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span className="badge badge-info" style={{ background: 'rgba(6, 182, 212, 0.2)', color: '#38bdf8' }}>
-                <Sparkles size={12} /> SIGNATURE DIFFERENTIATOR
-              </span>
-              <span className="badge badge-pass">ENGINE S3</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <span className="badge badge-info">ENGINE S3</span>
+              <span className="badge badge-pass">CRYPTOGRAPHIC BASELINE</span>
             </div>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.6rem', fontWeight: 800 }}>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>
               Cryptographic Pin-and-Diff Visualizer
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '780px' }}>
-              While standard scanners only inspect static source code, Shadowprint mathematically freezes canonical MCP tool definitions in SQLite and detects runtime schema drift, prompt injection mutations, and rug-pulls in real time.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+              Freezes canonical tool definitions in SQLite and detects mid-session schema drift and rug-pulls.
             </p>
           </div>
 
