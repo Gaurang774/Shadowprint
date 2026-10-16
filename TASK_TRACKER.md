@@ -59,8 +59,8 @@
 - [ ] `scripts/trigger_rugpull.py` (Stage touch trigger script)
 
 ### Builder B: Gaurang Udgirkar (Ollama Qwen3, Runtime S2, S3 & Client)
-- [ ] `shadowprint/s1_metadata/qwen_judge.py` (Ollama Qwen3-8B caller, temperature 0, add-only Pydantic JSON judge)
-- [ ] `shadowprint/s1_metadata/prompt_guard.py` (Optional prompt injection pre-filter)
+- [x] `shadowprint/s1_metadata/qwen_judge.py` (Ollama Qwen3-8B caller, temperature 0, add-only Pydantic JSON judge)
+- [x] `shadowprint/s1_metadata/prompt_guard.py` (Optional prompt injection pre-filter)
 - [ ] `shadowprint/client/mcp_client.py` (Guarded least-capability stdio client)
 - [ ] `docker/Dockerfile.sandbox` (Docker sandbox definition)
 - [ ] `docker/entrypoint.sh` (stdio cleanliness isolation harness)
