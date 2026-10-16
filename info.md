@@ -7,13 +7,16 @@
 
 ---
 
-## The 50/50 Equalization Strategy (Zero Overburden)
+## The 50/50 Equalization Strategy (Zero Overburden & Clean Boundaries)
 
-To ensure neither person is overburdened, the workload is split cleanly into two equal domains:
-* **Jasjyot Singh:** Owns **Static Code Analysis (S0), Metadata Prompt-Injection Analysis (S1), Deduplication Normalizer, Terminal/Markdown Reporting (S4), and CLI Orchestration**.
-* **Gaurang Udgirkar:** Owns **Docker Sandboxing, Guarded MCP Client, Dynamic Kernel Syscall Probing (S2), SQLite 3-Layer Pinning & Live Watcher (S3), and SARIF Exporter**.
+To ensure neither person is overburdened, the workload is split cleanly into two equal, non-blocking domains:
+* **Jasjyot Singh:** Owns **Static Code Analysis (S0), Metadata Regex/Deterministic Rules (S1), Deduplication Normalizer, Unified Reporting & UI (S4: Markdown, Rich Terminal, SARIF 2.1.0), and CLI Orchestration**.
+* **Gaurang Udgirkar:** Owns **Ollama & Local Qwen3-8B AI Judge (S1), Docker Sandboxing, Guarded MCP Client, Dynamic Kernel Syscall Probing (S2), and SQLite 3-Layer Pinning & Live Watcher (S3)**.
 
-Neither teammate is blocked by the other because **Jasjyot develops in pure Python host space** (testing S0/S1 with static code & mock snapshots), while **Gaurang develops in container & protocol space** (testing S2/S3 with Docker & live server scripts). They are linked only by the frozen `shadowprint/models.py`.
+### The Parallel Decoupling Rule (No Waiting):
+* **Jasjyot** develops in pure Python host space (testing S0 and S4 reports directly on disk and mock findings).
+* **Gaurang** manages AI model inference via Ollama and container/protocol runtime (testing Qwen3 locally, running Docker, and watching SQLite hashes).
+* They integrate through the frozen `shadowprint/models.py` contract.
 
 ---
 
@@ -24,7 +27,7 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 │                                EQUAL 50/50 FILE RESPONSIBILITY MATRIX                                              │
 ├─────────────────────────┬─────────────────────────────────────────────────┬────────────────────────────────────────┤
 │ Target Directory / File │ BUILDER: Jasjyot Singh                          │ BUILDER: Gaurang Udgirkar              │
-│                         │ Detection, Metadata, Normalizer & UI            │ Runtime, Probing, Integrity & SARIF    │
+│                         │ Static S0, S1-Rules, All Reporting S4 & CLI     │ Ollama Qwen3, Runtime S2, S3 & Client  │
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
 │ ROOT & CONFIGS          │ • `README.md` (Project pitch & demo guide)      │ • `requirements.txt` (Pinned deps)     │
 │                         │ • `Makefile` (make audit, make check)           │ • `.gitignore` (obs/, output/, .venv)  │
@@ -39,10 +42,10 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 │                         │ • `s0_static/claim_code_checker.py` (AST match) │                                        │
 │                         │ • `s0_static/rules/mcp_taint_rules.yaml`        │                                        │
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
-│ shadowprint/s1_metadata/│ • `s1_metadata/analyzer.py` (Orchestrator)      │                                        │
-│                         │ • `s1_metadata/deterministic_rules.py` (TAGs)   │               [NONE]                   │
-│                         │ • `s1_metadata/qwen_judge.py` (Ollama JSON)     │      (Zero metadata code overlap)      │
-│                         │ • `s1_metadata/prompt_guard.py` (Stretch prefit)│                                        │
+│ shadowprint/s1_metadata/│ • `s1_metadata/analyzer.py` (S1 Orchestrator)   │ • `s1_metadata/qwen_judge.py` (Ollama  │
+│                         │ • `s1_metadata/deterministic_rules.py` (TAGs,   │    Qwen3-8B caller, temperature 0,     │
+│                         │    zero-width spaces, second-person imperatives)│    add-only Pydantic JSON judge)       │
+│                         │                                                 │ • `s1_metadata/prompt_guard.py` (Opt.) │
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
 │ shadowprint/s2_prober/  │                                                 │ • `s2_prober/prober.py` (Sweep loop)   │
 │                         │                     [NONE]                      │ • `s2_prober/capability_model.py`      │
@@ -52,11 +55,12 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
 │ shadowprint/s3_integrity│                                                 │ • `s3_integrity/db.py` (SQLite store)  │
 │                         │                     [NONE]                      │ • `s3_integrity/hasher.py` (3-layer SHA│
-│                         │   (Transferred to Gaurang for balance!)         │ • `s3_integrity/watcher.py` (Polling)  │
+│                         │          (Zero database code overlap)           │ • `s3_integrity/watcher.py` (Polling)  │
 │                         │                                                 │ • `s3_integrity/differ.py` (deepdiff)  │
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
-│ shadowprint/s4_reporting│ • `s4_reporting/markdown_reporter.py` (Report)  │ • `s4_reporting/sarif_exporter.py`     │
-│                         │ • `s4_reporting/terminal_ui.py` (Rich matrix)   │   (SARIF 2.1.0 standard exporter)      │
+│ shadowprint/s4_reporting│ • `s4_reporting/markdown_reporter.py` (Report)  │                                        │
+│                         │ • `s4_reporting/terminal_ui.py` (Rich matrix)   │                 [NONE]                 │
+│                         │ • `s4_reporting/sarif_exporter.py` (SARIF 2.1.0)│       (Jasjyot owns all reports!)      │
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
 │ shadowprint/client/     │                     [NONE]                      │ • `client/mcp_client.py` (Guarded      │
 │                         │                                                 │    least-cap stdio client, bounds)     │
@@ -68,7 +72,7 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 │ fixtures/ (Test Suite)  │ • `fixtures/clean_notes/server.py` (F1)         │ • `fixtures/clean_fetch/server.py` (F1b│
 │                         │ • `fixtures/poisoned_weather/server.py` (F2)    │ • `fixtures/exfil_calculator/server.py`│
 │                         │ • `fixtures/vulnerable_runner/server.py` (F3)   │ • `fixtures/rugpull_suite/server.py`   │
-│                         │                                                 │ • `fixtures/attack_the_auditor/server.`│
+│                         │ • `fixtures/attack_the_auditor/server.py` (F6)  │                                        │
 ├─────────────────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────┤
 │ manifest/ & scripts/    │ • Slide deck presentation & demo narration      │ • `manifest/shadowprint_fixture_...json│
 │                         │ • `scripts/trigger_rugpull.py` (Demo trigger)   │ • `scripts/test_manifest.py` (Scorecard│
@@ -97,7 +101,7 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 
 ---
 
-### Hour-by-Hour Execution Plan
+### Detailed Stage Breakdown & Git Merge Plan
 
 #### ⏱️ Phase 1: Setup, Contracts Freeze & Preflight (00:00 – 00:45) · TOGETHER
 * **00:00 – 00:20 (Git Setup & Contract Freeze):**
@@ -105,20 +109,21 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
   * Co-write and freeze `shadowprint/models.py` (`Finding`, `Snapshot`, `Pin`, `BehaviorTuple`). 
   * Commit to `main`. **Neither teammate touches this file after minute 45.**
 * **00:20 – 00:45 (Preflight Sanity Check):**
-  * Jasjyot: Pull and test Ollama model: `ollama run qwen3:8b "ping"`.
-  * Gaurang: Verify Windows Docker Desktop with `docker run --rm --cap-add SYS_PTRACE --security-opt seccomp=unconfined ubuntu strace ls`.
+  * Gaurang: Warm local Ollama model (`ollama run qwen3:8b "ping"` or `qwen3:4b`) and test Docker Desktop with `docker run --rm --cap-add SYS_PTRACE --security-opt seccomp=unconfined ubuntu strace ls`.
+  * Jasjyot: Verify Python environment, install linters (`bandit`, `semgrep`, `gitleaks`), and test CLI dependencies.
 
 ---
 
 #### ⏱️ Phase 2: Parallel Deep Sprint 1 (00:45 – 03:00) · 2h 15m (INDEPENDENT)
 * **Jasjyot (`feat/jasjyot`):**
-  * Build `fixtures/clean_notes`, `fixtures/poisoned_weather`, `fixtures/vulnerable_runner`.
+  * Build `fixtures/clean_notes`, `fixtures/poisoned_weather`, `fixtures/vulnerable_runner`, and `fixtures/attack_the_auditor`.
   * Build `s0_static/` wrappers: Bandit JSON runner, Semgrep taint rules, Gitleaks secrets runner.
   * Build `normalizer.py`: Implement the deduplication formula `(file, line // 3, category)`.
   * Build `s1_metadata/deterministic_rules.py`: High-precision regex for Unicode TAGs (`\uE000`), zero-width spaces, and imperatives.
 * **Gaurang (`feat/gaurang`):**
   * Build `docker/Dockerfile.sandbox`, `docker/entrypoint.sh` (with `stdio` isolation), `docker/sink.py`.
   * Build `client/mcp_client.py`: Guarded least-capability client (stdio, size limits, rejects sampling/elicitation).
+  * Build `s1_metadata/qwen_judge.py`: Ollama Qwen3 caller with temperature 0, Pydantic JSON parsing, and add-only authority rule.
   * Build `fixtures/exfil_calculator`: Obfuscated key-theft tool that reads `/tmp/canary_creds.env`.
   * Build `fixtures/clean_fetch`: Clean negative control fixture.
   * Test: Boot a container and verify that `strace` logs cleanly to `/obs/strace.log` without corrupting stdout.
@@ -135,16 +140,16 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 
 #### ⏱️ Phase 4: Parallel Deep Sprint 2 (03:30 – 05:30) · 2h 00m (INDEPENDENT)
 * **Jasjyot (`feat/jasjyot`):**
-  * Complete `s1_metadata/qwen_judge.py`: Ollama Qwen3-8B caller with temperature 0 and add-only JSON parsing.
+  * Complete `s1_metadata/analyzer.py`: Integrates deterministic rules and calls Gaurang's `qwen_judge.py`.
   * Build `s4_reporting/markdown_reporter.py` generating `output/shadowprint_report.md`.
   * Build `s4_reporting/terminal_ui.py`: Color-coded Rich terminal tables and live status cards.
+  * Build `s4_reporting/sarif_exporter.py`: Full OASIS SARIF 2.1.0 JSON exporter.
   * Prepare `scripts/trigger_rugpull.py` to touch `/tmp/rugpull_trigger.flag`.
 * **Gaurang (`feat/gaurang`):**
   * Complete `s2_prober/`: `capability_model.py` (claim vs. syscalls) and `canary_tripwire.py`.
   * Implement the 10-call Burst Probe Sweep in `prober.py`.
   * Build Engine S3 (`s3_integrity/`): `db.py` (SQLite schema), `hasher.py` (3-layer SHA-256), `watcher.py` (2s polling loop), `differ.py` (`deepdiff` with escaped Unicode).
-  * Build `fixtures/rugpull_suite` and `fixtures/attack_the_auditor`.
-  * Build `s4_reporting/sarif_exporter.py` (converting `Finding` objects to SARIF 2.1.0).
+  * Build `fixtures/rugpull_suite` server side (evaluating touch flag).
 
 ---
 
@@ -159,7 +164,7 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
      s1_findings = run_s1_analysis(snapshot)
      s2_findings = run_s2_probe(path)
      all_findings = normalize_and_dedup(s0_findings + s1_findings + s2_findings)
-     generate_markdown_and_sarif(all_findings)
+     generate_markdown_terminal_and_sarif(all_findings)
      ```
   3. Run `shadowprint audit` end-to-end on Fixtures 1, 2, 3, and 4. Verify that findings match expectations.
 
@@ -186,7 +191,7 @@ Neither teammate is blocked by the other because **Jasjyot develops in pure Pyth
 ### 🛡️ THE 2-HOUR BUFFER & REHEARSAL BLOCK (08:00 – 10:00)
 
 #### ⏱️ Phase 8: Emergency Buffer & Hardening (08:00 – 09:00) · 1h 00m
-* **Buffer Utility:** If S2 Docker or Git merges were delayed, this hour absorbs the slip without panic.
+* **Buffer Utility:** If S2 Docker, Ollama response speed, or Git merges were delayed, this hour absorbs the slip without panic.
 * **The Airgap Test:** Disconnect Wi-Fi completely. Run `shadowprint audit` to prove zero external cloud calls.
 * **Encoding Check:** Ensure Windows Terminal is in UTF-8 mode (`chcp 65001`) so Unicode TAGs render cleanly without crashes.
 * **Slide Sync:** Ensure slide deck metrics match the final fixture manifest output.

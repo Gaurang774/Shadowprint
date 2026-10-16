@@ -19,8 +19,8 @@
 - **Deduplication Formula:** `(finding.file, finding.line // 3, finding.category)`.
 
 ## 👥 50/50 RESPONSIBILITY BOUNDARIES
-- **Jasjyot Singh (Builder A):** S0 Static, S1 Metadata & Qwen3, Normalizer, CLI Orchestrator, Terminal UI, Markdown Reporter.
-- **Gaurang Udgirkar (Builder B):** Models, Guarded MCP Client, S2 Prober & Syscalls, S3 SQLite & Watcher, SARIF Exporter, Docker sandbox.
+- **Jasjyot Singh (Builder A):** S0 Static, S1 Metadata (Deterministic Rules), Normalizer, CLI Orchestrator, All S4 Reporting (Terminal UI, Markdown Reporter, SARIF 2.1.0), Fixtures F1/F2/F3/F6.
+- **Gaurang Udgirkar (Builder B):** Models, Guarded MCP Client, S1 Ollama Qwen3-8B AI Judge (`qwen_judge.py`), S2 Dynamic Prober & Syscalls, S3 SQLite & Watcher, Docker sandbox, Fixtures F1b/F4/F5.
 
 ## 📋 PRE-EXECUTION CHECKLIST
 Always verify:

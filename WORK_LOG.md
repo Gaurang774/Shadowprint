@@ -105,26 +105,38 @@ All dependencies are installed in `.venv` and pinned in `requirements.txt`:
 
 ---
 
-## 👥 Next Actions Matrix (Phase 2 Ready)
+## 👥 Next Actions Matrix (Phase 2 Ready — Revised Balanced Division)
 
 ```
 ┌──────────────────────────────────────────────┬──────────────────────────────────────────────┐
 │ BUILDER A: Jasjyot Singh (JJ)                │ BUILDER B: Gaurang Udgirkar                  │
 │ Branch: feat/jasjyot                         │ Branch: feat/gaurang                         │
 ├──────────────────────────────────────────────┼──────────────────────────────────────────────┤
-│ 1. Build S0 Static Runners:                  │ 1. Build Docker Sandbox:                     │
-│    • bandit_runner.py (B301, B602, B310)     │    • docker/Dockerfile.sandbox               │
-│    • gitleaks_runner.py (AWS keys, tokens)   │    • docker/entrypoint.sh (stdio isolate)    │
-│    • claim_code_checker.py (AST mismatch)    │    • docker/sink.py (127.0.0.1:8080 HTTP)    │
-│    • mcp_taint_rules.yaml (Semgrep sinks)    │ 2. Build Guarded MCP Stdio Client:          │
-│    • scanner.py (Hostile #nosec check)       │    • shadowprint/client/mcp_client.py        │
-│ 2. Build S1 Metadata Analyzer:               │ 3. Build S2 Dynamic Prober Core:             │
-│    • deterministic_rules.py (Unicode TAGs)   │    • s2_prober/syscall_parser.py (strace)    │
-│    • qwen_judge.py (Add-only Ollama JSON)    │    • s2_prober/canary_tripwire.py (keys)     │
-│    • analyzer.py (S1 orchestrator)           │    • s2_prober/capability_model.py           │
-│ 3. Build Initial Fixtures:                   │ 4. Build Initial Fixtures:                   │
-│    • fixtures/clean_notes (F1 - Baseline)    │    • fixtures/clean_fetch (F1b - Baseline)   │
-│    • fixtures/poisoned_weather (F2 - S1)     │    • fixtures/exfil_calculator (F4 - S2)     │
-│    • fixtures/vulnerable_runner (F3 - S0)    │    • fixtures/rugpull_suite (F5 - S3)        │
+│ 1. S0 Static Runners:                        │ 1. S1 Local Ollama AI Judge:                 │
+│    • bandit_runner.py (AST checks)           │    • s1_metadata/qwen_judge.py (Ollama Qwen3)│
+│    • gitleaks_runner.py (Secrets)            │    • s1_metadata/prompt_guard.py (Opt. filter)│
+│    • claim_code_checker.py (AST mismatch)    │ 2. Docker Sandbox Isolation:                 │
+│    • mcp_taint_rules.yaml (Semgrep sinks)    │    • docker/Dockerfile.sandbox (strace)      │
+│    • scanner.py (Hostile #nosec check)       │    • docker/entrypoint.sh (stdio isolate)    │
+│ 2. S1 Deterministic Rules & Orchestration:   │    • docker/sink.py (127.0.0.1:8080 HTTP)    │
+│    • deterministic_rules.py (Unicode TAGs)   │ 3. Guarded MCP Stdio Client:                 │
+│    • analyzer.py (S1 orchestrator)           │    • shadowprint/client/mcp_client.py        │
+│ 3. All S4 Reporting & CLI:                   │ 4. S2 Dynamic Prober Core:                   │
+│    • cli.py & normalizer.py                  │    • s2_prober/syscall_parser.py (strace)    │
+│    • markdown_reporter.py (Report)           │    • s2_prober/canary_tripwire.py (keys)     │
+│    • terminal_ui.py (Rich terminal matrix)   │    • s2_prober/capability_model.py           │
+│    • sarif_exporter.py (SARIF 2.1.0)         │    • s2_prober/output_scanner.py (Exfil)     │
+│ 4. Assigned Fixtures & Scripts:              │    • s2_prober/prober.py (10-call sweep)     │
+│    • fixtures/clean_notes (F1 - Baseline)    │ 5. S3 Integrity & Pin-and-Diff:              │
+│    • fixtures/poisoned_weather (F2 - S1)     │    • s3_integrity/db.py (SQLite)             │
+│    • fixtures/vulnerable_runner (F3 - S0)    │    • s3_integrity/hasher.py (3-layer SHA-256)│
+│    • fixtures/attack_the_auditor (F6)        │    • s3_integrity/watcher.py (2s polling)    │
+│    • scripts/trigger_rugpull.py (Stage flag) │    • s3_integrity/differ.py (deepdiff)       │
+│                                              │ 6. Assigned Fixtures & Validation:           │
+│                                              │    • fixtures/clean_fetch (F1b - Baseline)   │
+│                                              │    • fixtures/exfil_calculator (F4 - S2)     │
+│                                              │    • fixtures/rugpull_suite (F5 - S3)        │
+│                                              │    • manifest/shadowprint_fixture_...json    │
+│                                              │    • scripts/test_manifest.py (Scorecard)    │
 └──────────────────────────────────────────────┴──────────────────────────────────────────────┘
 ```
