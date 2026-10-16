@@ -8,8 +8,8 @@
 
 | Phase | Window | Description | Status | Owner |
 |---|---|---|---|---|
-| **Phase 1** | 00:00 – 00:45 | Contracts & Preflight (Git setup, freeze `models.py`, environment checks) | 🔄 IN PROGRESS | Both (Jasjyot & Gaurang) |
-| **Phase 2** | 00:45 – 03:00 | Parallel Deep Sprint 1 (S0/S1 core, Docker sandbox, MCP client, Normalizer) | ⏳ PENDING | Independent |
+| **Phase 1** | 00:00 – 00:45 | Contracts & Preflight (Git setup, freeze `models.py`, environment checks) | ✅ COMPLETED | Both (Jasjyot & Gaurang) |
+| **Phase 2** | 00:45 – 03:00 | Parallel Deep Sprint 1 (S0/S1 core, Docker sandbox, MCP client, Normalizer) | 🔄 READY TO START | Independent |
 | **Phase 3** | 03:00 – 03:30 | Integration Checkpoint 1 (Git merge `main` + Stdio Cleanliness Test) | ⏳ PENDING | Both |
 | **Phase 4** | 03:30 – 05:30 | Parallel Deep Sprint 2 (S1 Qwen3, S2 Syscalls/Canary, S3 SQLite/Watcher, S4 SARIF/MD) | ⏳ PENDING | Independent |
 | **Phase 5** | 05:30 – 06:15 | Pipeline Wiring & Integration (`shadowprint audit` end-to-end on Fixtures 1–4) | ⏳ PENDING | Both |
@@ -31,10 +31,12 @@
 - [x] [PROJECT_RULES.md](file:///d:/ShadowPrint/Shadowprint/PROJECT_RULES.md) (Supreme Rules & Anti-Hallucination Checklist)
 - [x] [.agents/rules/project_rules.md](file:///d:/ShadowPrint/Shadowprint/.agents/rules/project_rules.md) (Antigravity Directives)
 - [x] [TASK_TRACKER.md](file:///d:/ShadowPrint/Shadowprint/TASK_TRACKER.md) (Execution State)
-- [ ] `requirements.txt` (Pinned host dependencies)
-- [ ] `.gitignore` (Ignore `/obs`, `shadowprint.db`, `.venv`, `output/`)
-- [ ] `Makefile` (`make audit`, `make check`)
-- [ ] `shadowprint/models.py` (Universal data contracts: `Finding`, `Snapshot`, `Pin`, `BehaviorTuple`)
+- [x] [WORK_LOG.md](file:///d:/ShadowPrint/Shadowprint/WORK_LOG.md) (Verifiable Progress Log & Checklists)
+- [x] `requirements.txt` (Pinned exact modern dependencies)
+- [x] `.gitignore` (Ignore `/obs`, `shadowprint.db`, `.venv`, `output/`)
+- [x] `pyproject.toml` (Package definition & CLI entrypoint)
+- [x] `shadowprint/models.py` (Universal data contracts: `Finding`, `Snapshot`, `Pin`, `BehaviorTuple`)
+- [x] `scripts/preflight_check.py` (Environment & dependency validator)
 
 ### Builder A: Jasjyot Singh (Detection, Metadata, Normalizer & UI)
 - [ ] `shadowprint/cli.py` (Typer CLI orchestrator: `audit`, `approve`, `watch`, `report`)
