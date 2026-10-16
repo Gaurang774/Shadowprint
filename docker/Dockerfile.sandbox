@@ -1,0 +1,32 @@
+# Shadowprint Dynamic Sandbox Image
+# Owner: Gaurang Udgirkar [G]
+# Purpose: Isolated, reproducible Linux environment for dynamic syscall probing & canary tripwire analysis.
+
+FROM python:3.12-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install Linux kernel tracing and diagnostic tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    strace \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pinned modern MCP and Pydantic dependencies
+RUN pip install --no-cache-dir mcp==2.3.0 pydantic==2.14.1
+
+# Create observation directory
+RUN mkdir -p /obs /app /opt
+
+WORKDIR /app
+
+# Copy supervisor and silent sink
+COPY sink.py /opt/sink.py
+COPY entrypoint.sh /entrypoint.sh
+
+# Ensure executable permissions and LF line endings
+RUN chmod +x /entrypoint.sh /opt/sink.py
+
+ENTRYPOINT ["/entrypoint.sh"]

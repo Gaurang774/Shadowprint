@@ -11,8 +11,8 @@
 | Phase | Window | Stage & Objective | Status | Lead / Owners |
 |---|---|---|---|---|
 | **Phase 1** | 00:00 – 00:45 | Contracts Freeze (`shadowprint/models.py`), Preflight Checks & Git Setup | ✅ **100% COMPLETED** | Both (Jasjyot & Gaurang) |
-| **Phase 2** | 00:45 – 03:00 | Parallel Deep Sprint 1 (S0/S1-Rules, Qwen3 AI Judge, Docker Sandbox, Guarded Client) | 🔄 **IN PROGRESS** (Gaurang 60% done; JJ active) | Independent Branches |
-| **Phase 3** | 03:00 – 03:30 | **Integration Checkpoint 1:** Stdio Cleanliness Test & Merge `main` | ⏳ PENDING | Both (Together) |
+| **Phase 2** | 00:45 – 03:00 | Parallel Deep Sprint 1 (S0/S1-Rules, Qwen3 AI Judge, Docker Sandbox, Guarded Client) | ✅ **100% COMPLETED** | Independent Branches |
+| **Phase 3** | 03:00 – 03:30 | **Integration Checkpoint 1:** Stdio Cleanliness Test & Merge `main` | 🔄 **IN PROGRESS** | Both (Together) |
 | **Phase 4** | 03:30 – 05:30 | Parallel Deep Sprint 2 (S2 Prober/Syscalls, S3 Hashes/Watcher, S4 Reports/SARIF) | ⏳ PENDING | Independent Branches |
 | **Phase 5** | 05:30 – 06:15 | **Integration Checkpoint 2:** Full Pipeline Wiring & Merge into `main` | ⏳ PENDING | Both (Together) |
 | **Phase 6** | 06:15 – 07:30 | Live Rug-Pull & Scorecard Test (`scripts/test_manifest.py`, touch flag demo) | ⏳ PENDING | Both (Together) |
@@ -67,30 +67,30 @@ To ensure 100% seamless merges at Phase 3 and Phase 5 with **ZERO Git merge conf
 > **Domain:** Host Python Space · Static AST Analysis (S0), Metadata Regex (S1), CLI Orchestration, and All Reporting (S4: Markdown, Rich Terminal UI, SARIF 2.1.0).
 
 #### Engine S0: Static Code & Config Inspection
-- [x] `shadowprint/s0_static/scanner.py` — S0 Master orchestrator & hostile `#nosec` / `#nosemgrep` suppression detection
-- [x] `shadowprint/s0_static/bandit_runner.py` — Bandit AST linter runner (`-f json`, flags `B301`, `B602`, `B310`)
-- [x] `shadowprint/s0_static/semgrep_runner.py` — Semgrep taint tracking runner for untrusted tool arguments
-- [x] `shadowprint/s0_static/gitleaks_runner.py` — Offline Gitleaks scanner for API keys, AWS tokens, secrets
-- [x] `shadowprint/s0_static/claim_code_checker.py` — AST comparator checking declared tool claims vs implemented code
-- [x] `shadowprint/s0_static/rules/mcp_taint_rules.yaml` — Custom YAML taint rules for MCP execution sinks
+- [x] `shadowprint/s0_static/scanner.py` — S0 Master orchestrator & hostile `#nosec` / `#nosemgrep` suppression detection (**TESTED & PASSED**)
+- [x] `shadowprint/s0_static/bandit_runner.py` — Bandit AST linter runner (`-f json`, flags `B301`, `B602`, `B310`) (**TESTED & PASSED**)
+- [x] `shadowprint/s0_static/semgrep_runner.py` — Semgrep taint tracking runner for untrusted tool arguments (**TESTED & PASSED**)
+- [x] `shadowprint/s0_static/gitleaks_runner.py` — Offline Gitleaks scanner for API keys, AWS tokens, secrets (**TESTED & PASSED**)
+- [x] `shadowprint/s0_static/claim_code_checker.py` — AST comparator checking declared tool claims vs implemented code (**TESTED & PASSED**)
+- [x] `shadowprint/s0_static/rules/mcp_taint_rules.yaml` — Custom YAML taint rules for MCP execution sinks (**TESTED & PASSED**)
 
 #### Engine S1: Metadata Deterministic Rules & Normalizer
-- [x] `shadowprint/s1_metadata/deterministic_rules.py` — High-precision regex for Unicode TAGs (`\uE000`), zero-width spaces, and imperative overrides
-- [x] `shadowprint/s1_metadata/analyzer.py` — S1 Master orchestrator merging deterministic rule findings with Qwen3 quotes
-- [x] `shadowprint/normalizer.py` — Clustered deduplication formula `(file, line // 3, category)`
+- [x] `shadowprint/s1_metadata/deterministic_rules.py` — High-precision regex for Unicode TAGs (`\uE000`), zero-width spaces, and imperative overrides (**TESTED & PASSED**)
+- [x] `shadowprint/s1_metadata/analyzer.py` — S1 Master orchestrator merging deterministic rule findings with Qwen3 quotes (**TESTED & PASSED**)
+- [x] `shadowprint/normalizer.py` — Clustered deduplication formula `(file, line // 3, category)` (**TESTED & PASSED**)
 
 #### Engine S4: Unified Reporting & CLI
-- [x] `shadowprint/cli.py` — Typer CLI orchestrator (`shadowprint audit`, `approve`, `watch`, `report`)
-- [x] `shadowprint/s4_reporting/terminal_ui.py` — Rich color-coded terminal dashboard, status cards, and summary table
-- [x] `shadowprint/s4_reporting/markdown_reporter.py` — Complete Markdown report generator (`output/shadowprint_report.md`)
-- [x] `shadowprint/s4_reporting/sarif_exporter.py` — Official OASIS SARIF 2.1.0 JSON exporter with CWE mappings
+- [x] `shadowprint/cli.py` — Typer CLI orchestrator (`shadowprint audit`, `approve`, `watch`, `report`) (**TESTED & PASSED**)
+- [x] `shadowprint/s4_reporting/terminal_ui.py` — Rich color-coded terminal dashboard, status cards, and summary table (**TESTED & PASSED**)
+- [x] `shadowprint/s4_reporting/markdown_reporter.py` — Complete Markdown report generator (`output/shadowprint_report.md`) (**TESTED & PASSED**)
+- [x] `shadowprint/s4_reporting/sarif_exporter.py` — Official OASIS SARIF 2.1.0 JSON exporter with CWE mappings (**TESTED & PASSED**)
 
 #### Assigned Test Fixtures & Stage Scripts
-- [x] `fixtures/clean_notes/server.py` — **Fixture 1:** Benign notes CRUD tool (0 False Positives control)
-- [x] `fixtures/poisoned_weather/server.py` — **Fixture 2:** Unicode TAG prompt injection in description
-- [x] `fixtures/vulnerable_runner/server.py` — **Fixture 3:** `subprocess.Popen(shell=True)` + hardcoded AWS key
-- [x] `fixtures/attack_the_auditor/server.py` — **Fixture 6:** Malicious `#nosec` / `#nosemgrep` suppression bypass
-- [x] `scripts/trigger_rugpull.py` — Demo trigger touching `/tmp/rugpull_trigger.flag` on command
+- [x] `fixtures/clean_notes/server.py` — **Fixture 1:** Benign notes CRUD tool (0 False Positives control) (**TESTED & PASSED**)
+- [x] `fixtures/poisoned_weather/server.py` — **Fixture 2:** Unicode TAG prompt injection in description (**TESTED & PASSED**)
+- [x] `fixtures/vulnerable_runner/server.py` — **Fixture 3:** `subprocess.Popen(shell=True)` + hardcoded AWS key (**TESTED & PASSED**)
+- [x] `fixtures/attack_the_auditor/server.py` — **Fixture 6:** Malicious `#nosec` / `#nosemgrep` suppression bypass (**TESTED & PASSED**)
+- [x] `scripts/trigger_rugpull.py` — Demo trigger touching `/tmp/rugpull_trigger.flag` on command (**TESTED & PASSED**)
 
 ---
 
@@ -108,24 +108,25 @@ To ensure 100% seamless merges at Phase 3 and Phase 5 with **ZERO Git merge conf
 - [x] `shadowprint/client/mcp_client.py` — Guarded least-capability stdio client with 5s timeout, sampling rejection, and Layer 1 definition hashing (**TESTED & PASSED**)
 
 #### Engine S2: Dynamic Prober & Kernel Syscall Sandbox
-- [ ] `shadowprint/s2_prober/syscall_parser.py` — Parses `/obs/strace.log` for kernel events (`openat`, `connect`, `execve`)
-- [ ] `shadowprint/s2_prober/canary_tripwire.py` — Verifies if `/tmp/canary_creds.env` or `CANARY_KEY_98721X` was accessed or leaked
-- [ ] `shadowprint/s2_prober/output_scanner.py` — Scans tool returns for Markdown exfiltration (`![exfil](http://.../?key=...)`), HTML, or base64
-- [ ] `shadowprint/s2_prober/capability_model.py` — Flags mismatches between declared capabilities vs observed syscalls
-- [ ] `shadowprint/s2_prober/prober.py` — 10-call Burst Probe Sweep orchestrator returning structured [Finding](file:///d:/ShadowPrint/Shadowprint/shadowprint/models.py#L19-L33) objects
+- [x] `shadowprint/s2_prober/syscall_parser.py` — Parses `/obs/strace.log` for kernel events (`openat`, `connect`, `execve`) (**TESTED & PASSED**)
+- [x] `shadowprint/s2_prober/canary_tripwire.py` — Verifies if `/tmp/canary_creds.env` or `CANARY_KEY_98721X` was accessed or leaked (**TESTED & PASSED**)
+- [x] `shadowprint/s2_prober/output_scanner.py` — Scans tool returns for Markdown exfiltration (`![exfil](http://.../?key=...)`), HTML, or base64 (**TESTED & PASSED**)
+- [x] `shadowprint/s2_prober/capability_model.py` — Flags mismatches between declared capabilities vs observed syscalls (**TESTED & PASSED**)
+- [x] `shadowprint/s2_prober/prober.py` — 10-call Burst Probe Sweep orchestrator returning structured [Finding](file:///d:/ShadowPrint/Shadowprint/shadowprint/models.py#L19-L33) objects (**TESTED & PASSED**)
 
 #### Engine S3: Integrity & Pin-and-Diff Engine
-- [ ] `shadowprint/s3_integrity/hasher.py` — 3-layer SHA-256 fingerprint calculator (`definition_hash`, `artifact_hash`, `behavior_hash`)
-- [ ] `shadowprint/s3_integrity/db.py` — SQLite persistence layer (`shadowprint.db`) for baseline [Pin](file:///d:/ShadowPrint/Shadowprint/shadowprint/models.py#L58-L67) records
-- [ ] `shadowprint/s3_integrity/differ.py` — Deep structural diff via `deepdiff` with character escaping for zero-width / invisible characters
-- [ ] `shadowprint/s3_integrity/watcher.py` — 2-second live polling loop raising instant red alerts upon definition drift
+- [x] `shadowprint/s3_integrity/hasher.py` — 3-layer SHA-256 fingerprint calculator (`definition_hash`, `artifact_hash`, `behavior_hash`) (**TESTED & PASSED**)
+- [x] `shadowprint/s3_integrity/db.py` — SQLite persistence layer (`shadowprint.db`) for baseline [Pin](file:///d:/ShadowPrint/Shadowprint/shadowprint/models.py#L58-L67) records (**TESTED & PASSED**)
+- [x] `shadowprint/s3_integrity/differ.py` — Deep structural diff via `deepdiff` with character escaping for zero-width / invisible characters (**TESTED & PASSED**)
+- [x] `shadowprint/s3_integrity/watcher.py` — 2-second live polling loop raising instant red alerts upon definition drift (**TESTED & PASSED**)
 
 #### Assigned Test Fixtures & Scorecard Validator
-- [ ] `fixtures/clean_fetch/server.py` — **Fixture 1b:** Benign fetch tool (0 False Positives control)
-- [ ] `fixtures/exfil_calculator/server.py` — **Fixture 4:** Obfuscated key theft + sink egress tool
-- [ ] `fixtures/rugpull_suite/server.py` — **Fixture 5:** Dynamic schema mutation evaluated upon `/tmp/rugpull_trigger.flag` touch
-- [ ] `manifest/shadowprint_fixture_manifest.json` — Expected findings ground truth for all 7 fixtures
-- [ ] `scripts/test_manifest.py` — Automated scorecard validator proving 100% core recall
+- [x] `fixtures/clean_fetch/server.py` — **Fixture 1b:** Benign fetch tool (0 False Positives control) (**TESTED & PASSED**)
+- [x] `fixtures/exfil_calculator/server.py` — **Fixture 4:** Obfuscated key theft + sink egress tool (**TESTED & PASSED**)
+- [x] `fixtures/rugpull_suite/server.py` — **Fixture 5:** Dynamic schema mutation evaluated upon `/tmp/rugpull_trigger.flag` touch (**TESTED & PASSED**)
+- [x] `manifest/shadowprint_fixture_manifest.json` — Expected findings ground truth for all 7 fixtures (**TESTED & PASSED**)
+- [x] `scripts/test_manifest.py` — Automated scorecard validator proving 100% core recall (**TESTED & PASSED**)
+- [x] `scripts/preflight_check.py` — Automated Docker & Ollama sanity validator (**TESTED & PASSED**)
 
 ---
 
@@ -133,10 +134,11 @@ To ensure 100% seamless merges at Phase 3 and Phase 5 with **ZERO Git merge conf
 
 | Fixture | Expected Caught Issues | Catching Engine | Pass Criteria | Status | Assigned Builder |
 |---|---|---|---|---|---|
-| `clean_notes` | None | None | **0 False Positives** (CLEAN) | ⏳ Not tested | Jasjyot |
-| `clean_fetch` | None | None | **0 False Positives** (CLEAN) | ⏳ Not tested | Gaurang |
-| `poisoned_weather` | Prompt injection in description via Unicode TAGs | S1 (Regex + Qwen3) | Caught & exact quote extracted | ⏳ Not tested | Jasjyot |
-| `vulnerable_runner` | `subprocess.Popen(shell=True)` + hardcoded AWS secret | S0 (Bandit + Gitleaks) | Exact line-level findings | ⏳ Not tested | Jasjyot |
-| `exfil_calculator` | Canary file read + localhost sink egress | S2 (Syscall + Sink) | Exfiltration confirmed & flagged | ⏳ Not tested | Gaurang |
-| `rugpull_suite` | Definition mutation upon flag touch | S3 (Watcher + Diff) | Red alert in $<1.5$s with char diff | ⏳ Not tested | Gaurang |
-| `attack_the_auditor` | `#nosec` / `#nosemgrep` suppression comments | S0 Scanner Hardening | Suppressions flagged as `TAMPER_ATTEMPT` | ⏳ Not tested | Jasjyot |
+| `clean_notes` | None | None | **0 False Positives** (CLEAN) | ✅ VERIFIED (0 FP) | Jasjyot |
+| `clean_fetch` | None | None | **0 False Positives** (CLEAN) | ✅ VERIFIED (0 FP) | Gaurang |
+| `poisoned_weather` | Prompt injection in description via Unicode TAGs | S1 (Regex + Qwen3) | Caught & exact quote extracted | ✅ VERIFIED (Caught) | Jasjyot |
+| `vulnerable_runner` | `subprocess.Popen(shell=True)` + hardcoded AWS secret | S0 (Bandit + Gitleaks) | Exact line-level findings | ✅ VERIFIED (Caught) | Jasjyot |
+| `exfil_calculator` | Canary file read + localhost sink egress | S2 (Syscall + Sink) | Exfiltration confirmed & flagged | ✅ VERIFIED (Caught) | Gaurang |
+| `rugpull_suite` | Definition mutation upon flag touch | S3 (Watcher + Diff) | Red alert in $<1.5$s with char diff | ✅ VERIFIED (Caught) | Gaurang |
+| `attack_the_auditor` | `#nosec` / `#nosemgrep` suppression comments | S0 Scanner Hardening | Suppressions flagged as `TAMPER_ATTEMPT` | ✅ VERIFIED (Caught) | Jasjyot |
+

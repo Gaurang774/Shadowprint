@@ -13,8 +13,8 @@ $$\text{Claim} \longleftrightarrow \text{Code} \longleftrightarrow \text{Runtime
 * **Track:** Track 1: Open Weight AI & Open Source Tools
 * **Team:** Qodex
 * **Co-Builders:**
-  * **Jasjyot Singh (Team Lead):** S0 Static Code Analysis, S1 Metadata & Prompt Injection Analysis, Deduplication Normalizer, Terminal & Markdown Reporting, CLI Orchestrator.
-  * **Gaurang Udgirkar:** Docker Sandboxing, Guarded MCP Client, S2 Dynamic Kernel Syscall Probing, S3 SQLite 3-Layer Pinning & Live Watcher, SARIF Exporter.
+  * **Jasjyot Singh (Team Lead):** S0 Static Code Analysis, S1 Metadata Regex/Deterministic Rules, Deduplication Normalizer, Unified Reporting & UI (S4: Markdown, Rich Terminal, SARIF 2.1.0), and CLI Orchestrator.
+  * **Gaurang Udgirkar:** Ollama & Local Qwen3-8B AI Judge (S1), Docker Sandboxing, Guarded MCP Client, S2 Dynamic Kernel Syscall Probing, S3 SQLite 3-Layer Pinning & Live Watcher.
 
 ---
 

@@ -11,8 +11,8 @@ An evidence-first, 100% offline security auditor for Model Context Protocol (MCP
 $$\text{Claim} \longleftrightarrow \text{Code} \longleftrightarrow \text{Runtime} \longleftrightarrow \text{Drift}$$
 
 **Who is building it?**  
-* **Jasjyot Singh (Team Lead / Builder A):** S0 Static Code Analysis, S1 Metadata & Prompt Injection, Deduplication Normalizer, Terminal & Markdown Reporting, CLI Orchestration.
-* **Gaurang Udgirkar (Builder B):** Docker Sandboxing, Guarded MCP Client, S2 Dynamic Kernel Syscall Probing, S3 SQLite 3-Layer Pinning & Live Watcher, SARIF Exporter.
+* **Jasjyot Singh (Team Lead / Builder A):** S0 Static Code Analysis, S1 Metadata Regex/Deterministic Rules, Deduplication Normalizer, Unified Reporting & UI (S4: Markdown, Rich Terminal, SARIF 2.1.0), and CLI Orchestration.
+* **Gaurang Udgirkar (Builder B):** Ollama & Local Qwen3-8B AI Judge (S1), Docker Sandboxing, Guarded MCP Client, S2 Dynamic Kernel Syscall Probing, S3 SQLite 3-Layer Pinning & Live Watcher.
 
 ---
 

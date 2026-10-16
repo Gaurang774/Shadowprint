@@ -80,9 +80,9 @@ All dependencies are installed in `.venv` and pinned in `requirements.txt`:
 ### 3. Local Git Branching Strategy
 * Initial commit created on `main`: `chore: initial project structure and frozen data contracts`.
 * Created local branches:
-  - `feat/jasjyot`: For Jasjyot (JJ) to build S0 static, S1 metadata, normalizer, CLI, and Markdown report.
-  - `feat/gaurang`: For Gaurang to build Docker sandbox, Guarded MCP client, S2 dynamic prober, S3 SQLite integrity watcher, and SARIF exporter.
-* **Confirmed:** Zero commits pushed to GitHub. Working purely locally.
+  - `feat/jasjyot`: For Jasjyot (JJ) to build S0 static, S1 metadata deterministic rules, normalizer, CLI, and all S4 reporting (Markdown, Terminal UI, SARIF 2.1.0).
+  - `feat/gaurang`: For Gaurang to build Docker sandbox, Guarded MCP client, S1 Ollama Qwen3 AI judge, S2 dynamic prober, and S3 SQLite integrity watcher.
+* **Remote Branches:** Published to GitHub (`origin`).
 
 ### 4. Environment & Tooling Sanity Tests
 * **Preflight Script:** Ran `scripts/preflight_check.py`:
@@ -145,31 +145,67 @@ All dependencies are installed in `.venv` and pinned in `requirements.txt`:
 
 ---
 
-## 👥 Next Actions Matrix (Sprint 1 Active Development)
+## 👥 Next Actions Matrix (Sprint 1 Active Development & Integration)
 
 ```
 ┌──────────────────────────────────────────────┬──────────────────────────────────────────────┐
 │ BUILDER A: Jasjyot Singh (JJ)                │ BUILDER B: Gaurang Udgirkar                  │
 │ Branch: feat/jasjyot                         │ Branch: feat/gaurang                         │
 ├──────────────────────────────────────────────┼──────────────────────────────────────────────┤
-│ Status: SPRINT 1 DELIVERABLES COMPLETE!      │ 1. Build Docker Sandbox:                     │
-│ Ready for Phase 3 Checkpoint 1 Integration   │    • docker/Dockerfile.sandbox               │
-│                                              │    • docker/entrypoint.sh (stdio isolate)    │
-│ Next:                                        │    • docker/sink.py (127.0.0.1:8080 HTTP)    │
-│ • Coordinate Phase 3 Checkpoint 1 with       │ 2. Build Guarded MCP Stdio Client:          │
-│   Gaurang's feat/gaurang branch              │    • shadowprint/client/mcp_client.py        │
-│ • Assist in wire-up for Docker sandbox and   │ 3. Build S1 Local AI Judge:                  │
-│   live MCP stdio client                      │    • s1_metadata/qwen_judge.py (Add-only)    │
-│                                              │    • s1_metadata/prompt_guard.py             │
-│                                              │ 4. Build S2 Dynamic Prober Core:             │
-│                                              │    • s2_prober/syscall_parser.py (strace)    │
-│                                              │    • s2_prober/canary_tripwire.py (keys)     │
-│                                              │    • s2_prober/capability_model.py           │
-│                                              │ 5. Build S3 Integrity Engine:                │
-│                                              │    • s3_integrity/db.py (SQLite)             │
-│                                              │    • s3_integrity/hasher.py (3-layer SHA-256)│
-│                                              │    • s3_integrity/watcher.py (2s polling)    │
+│ Status: SPRINT 1 DELIVERABLES COMPLETE!      │ Status: SPRINT 1 DELIVERABLES COMPLETE!      │
+│ Modules Verified:                            │ Modules Verified:                            │
+│ • S0 Static Scanner & Rules (Bandit,         │ • S1 Local Ollama Qwen3 AI Judge             │
+│   Gitleaks, Semgrep, AST Claim Checker)      │ • Container Sandbox & Guarded MCP Client     │
+│ • S1 Deterministic Rules (Unicode TAGs)      │ • S2 Dynamic Prober & Kernel Syscalls        │
+│ • All S4 Reporting (Terminal UI, MD, SARIF)  │ • S3 Integrity & Pin-and-Diff (DeepDiff)     │
+│ • Typer CLI & Clustered Normalizer           │ • Fixtures: clean_fetch, exfil_calculator,   │
+│ • Fixtures: clean_notes, poisoned_weather,   │   rugpull_suite                              │
+│   vulnerable_runner, attack_the_auditor      │ • Benchmark Manifest & Scorecard Validator   │
+│ Next: Phase 3 Checkpoint 1 Integration       │ Next: Phase 3 Checkpoint 1 Integration       │
 └──────────────────────────────────────────────┴──────────────────────────────────────────────┘
 ```
+
+---
+
+## 🛠️ Phase 2: Engine Development Log (Gaurang's Track)
+
+### Milestone 1: Local Ollama Qwen3 AI Judge (`s1_metadata/`) — ✅ COMPLETED & TESTED
+* `shadowprint/s1_metadata/prompt_guard.py`: Heuristic pre-filter for direct prompt injections, control tags, and Plane 14 tag characters (`\U000E0000-\U000E007F`).
+* `shadowprint/s1_metadata/qwen_judge.py`: Offline Ollama Qwen3 judge with `temperature=0.0`, `format="json"`, and strict add-only authority.
+* `tests/test_qwen_judge.py`: 5/5 tests passed in 27.96s.
+
+### Milestones 2 & 3: Container Sandbox & Guarded MCP Client — ✅ COMPLETED & TESTED
+* `docker/sink.py`: Silent HTTP sink on `127.0.0.1:8080` capturing egress payloads to `/obs/sink.log`.
+* `docker/entrypoint.sh`: Container supervisor managing background sink, planted canary decoy (`/tmp/canary_creds.env`), and clean stdio redirection of strace to `/obs/strace.log`.
+* `docker/Dockerfile.sandbox`: Built image `shadowprint-sandbox:latest`.
+* `shadowprint/client/mcp_client.py`: Async stdio JSON-RPC client with 5s timeout, sampling rejection (`sampling/createMessage`), and Layer 1 definition hashing.
+* `tests/test_docker_sandbox.py` & `tests/test_mcp_client.py`: 4/4 tests passed in 1.01s.
+
+### Milestone 4: Engine S2 Dynamic Prober & Kernel Syscalls — ✅ COMPLETED & TESTED
+* `shadowprint/s2_prober/syscall_parser.py`: Linux strace parser (`openat`, `connect`, `execve`), filtering runtime noise, computing 64-char `behavior_hash`.
+* `shadowprint/s2_prober/canary_tripwire.py`: Canary detection for file reads (`/tmp/canary_creds.env`) and value leaks (`CANARY_KEY_98721X`).
+* `shadowprint/s2_prober/output_scanner.py`: Output scanner for Markdown image exfil `![img](...)`, credentials, HTML tags, and base64 blobs.
+* `shadowprint/s2_prober/capability_model.py`: Mismatch detector between declared capabilities and observed syscalls.
+* `shadowprint/s2_prober/prober.py`: 10-call burst probe sweep orchestrator across target tools.
+* `tests/test_s2_prober.py`: 5/5 tests passed in 0.40s.
+
+### Milestone 5: Engine S3 Integrity & Pin-and-Diff — ✅ COMPLETED & TESTED
+* `shadowprint/s3_integrity/hasher.py`: 3-layer SHA-256 calculator (definition, artifact, behavior).
+* `shadowprint/s3_integrity/db.py`: SQLite manager (`shadowprint.db`) for pinned snapshots, history, and verification lookups.
+* `shadowprint/s3_integrity/differ.py`: Structural diff engine using `deepdiff`, with visual escaping of zero-width (`\u200b`, `\u200c`, etc.) and Unicode TAG characters (`\U000E0000-\U000E007F`).
+* `shadowprint/s3_integrity/watcher.py`: 2-second live polling loop with sub-1.5s rug-pull callback alerting.
+* `tests/test_s3_integrity.py`: 4/4 tests passed in 0.30s.
+
+### Milestone 6: Gaurang's Benchmark Fixtures — ✅ COMPLETED & TESTED
+* `fixtures/clean_fetch/server.py`: Negative control MCP server (0 false positives).
+* `fixtures/exfil_calculator/server.py`: Obfuscated calculator attempting `/tmp/canary_creds.env` read and HTTP sink exfiltration.
+* `fixtures/rugpull_suite/server.py`: Tool definition flipper triggered by `/tmp/rugpull_trigger.flag`.
+* `tests/test_gaurang_fixtures.py`: 3/3 tests passed in 1.59s.
+
+### Milestone 7: Benchmark Manifest & Automated Scorecard Validator — ✅ COMPLETED & TESTED
+* `manifest/shadowprint_fixture_manifest.json`: Ground truth recall and false positive benchmarks for all 7 fixtures.
+* `scripts/test_manifest.py`: Scorecard validator asserting 100% precision and core recall across active fixtures.
+* Verification result: 3/3 active fixtures passing (`clean_fetch` 0 FP, `exfil_calculator` caught exfil, `rugpull_suite` caught schema drift in sub-second).
+* Test suite health: 21/21 tests passed (100% green).
 
 
