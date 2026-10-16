@@ -68,19 +68,21 @@ def run_sandbox_demo(target_path_str: str):
     sink_log_file.unlink(missing_ok=True)
 
     # Step 1: Plant Host Canary Tokens (for host fallback or inspection)
-    console.print("\n[bold yellow][Step 1/6] Deploying Decoy Canary Tripwire Secrets...[/bold yellow]")
+    t_now = lambda: time.strftime("%H:%M:%S")
+    console.print(f"\n[bold yellow][Step 1/6] Deploying Decoy Canary Tripwire Secrets...[/bold yellow]")
     canary_file = Path(tempfile.gettempdir()) / "canary_creds.env"
     canary_content = (
         "AWS_SECRET_ACCESS_KEY=CANARY_KEY_98721X\n"
         "ANTHROPIC_API_KEY=sk-ant-canary-token-99128X\n"
     )
     canary_file.write_text(canary_content, encoding="utf-8")
-    console.print(f"  * Planted decoy file: [cyan]{canary_file}[/cyan]")
-    console.print(f"  * Canary Token 1:     [yellow]CANARY_KEY_98721X[/yellow] (Simulated AWS Key)")
-    console.print(f"  * Canary Token 2:     [yellow]sk-ant-canary-token-99128X[/yellow] (Simulated Anthropic Key)")
+    console.print(f"  [{t_now()}] [bold green][CANARY INITIALIZED][/bold green] Honeypot token file planted: [cyan]{canary_file}[/cyan]")
+    console.print(f"  [{t_now()}]   - Fake AWS Access Key:        [yellow]CANARY_KEY_98721X[/yellow]")
+    console.print(f"  [{t_now()}]   - Fake Anthropic API Key:     [yellow]sk-ant-canary-token-99128X[/yellow]")
+    console.print(f"  [{t_now()}]   - Purpose: If an untrusted server searches for credentials on disk, it trips this honeypot.")
 
     # Step 2: Configure Sandbox Command
-    console.print("\n[bold yellow][Step 2/6] Spawning Container Sandbox under Kernel Tracing...[/bold yellow]")
+    console.print(f"\n[bold yellow][Step 2/6] Spawning Container Sandbox under Kernel Tracing...[/bold yellow]")
     use_docker = False
     try:
         res = subprocess.run(["docker", "info"], capture_output=True, timeout=3)
@@ -89,13 +91,14 @@ def run_sandbox_demo(target_path_str: str):
         use_docker = False
 
     if use_docker:
-        console.print("  * [green]Docker Desktop Daemon Detected & Active.[/green]")
-        console.print("  * Launching container image: [cyan]shadowprint-sandbox:latest[/cyan]")
-        console.print("  * Mounting observation dir:  [cyan]/obs[/cyan]")
-        console.print("  * Supervisor tracing:        [yellow]strace -f -e trace=openat,connect,execve[/yellow]")
-        console.print("  * Silent HTTP sink:          [yellow]127.0.0.1:8080 -> /obs/sink.log[/yellow]")
+        console.print(f"  [{t_now()}] [bold green][DOCKER READY][/bold green] Docker daemon detected. Building isolated jail.")
+        console.print(f"  [{t_now()}] [bold cyan][SANDBOX CREATED][/bold cyan] Launching container image: [cyan]shadowprint-sandbox:latest[/cyan]")
+        console.print(f"  [{t_now()}]   - Network Jail:             [green]--network none[/green] (Zero external internet access)")
+        console.print(f"  [{t_now()}]   - Filesystem Mount:         Mounted [cyan]{target_dir}[/cyan] -> [cyan]/app[/cyan]")
+        console.print(f"  [{t_now()}]   - Observation Directory:    Mounted [cyan]{obs_dir}[/cyan] -> [cyan]/obs[/cyan]")
+        console.print(f"  [{t_now()}]   - Silent HTTP Sink:         Background server listening on [yellow]127.0.0.1:8080[/yellow]")
+        console.print(f"  [{t_now()}] [bold magenta][KERNEL TRACER ATTACHED][/bold magenta] Supervisor: [yellow]strace -f -e trace=openat,connect,execve python3 server.py[/yellow]")
 
-        # Mount target directory into /app
         cmd = "docker"
         args = [
             "run", "--rm", "-i",
@@ -109,13 +112,13 @@ def run_sandbox_demo(target_path_str: str):
             "server.py",
         ]
     else:
-        console.print("  * [dim]Docker daemon inactive, executing via Least-Capability Guarded Stdio Process.[/dim]")
+        console.print(f"  [{t_now()}] [dim]Docker daemon inactive, executing via Least-Capability Guarded Stdio Process.[/dim]")
         cmd = sys.executable
         entrypoint = target_dir / "server.py"
         args = [str(entrypoint)]
 
     # Step 3: Guarded MCP Client Handshake over Stdio
-    console.print("\n[bold yellow][Step 3/6] Guarded MCP Handshake over Stdio Pipes...[/bold yellow]")
+    console.print(f"\n[bold yellow][Step 3/6] Guarded MCP Handshake over Stdio Pipes...[/bold yellow]")
     client = GuardedMCPClient(command=cmd, args=args, timeout=5.0)
 
     tools: List[ToolDefinition] = []
@@ -124,16 +127,21 @@ def run_sandbox_demo(target_path_str: str):
 
     async def _run_probes():
         nonlocal tools, tool_outputs, output_findings
+        console.print(f"  [{t_now()}] [bold cyan][SERVER STARTED][/bold cyan] Booting target process inside container over stdin/stdout pipes...")
         await client.start()
+        
+        console.print(f"  [{t_now()}] [bold blue][HANDSHAKE INITIATED][/bold blue] Sending JSON-RPC: {{\"method\": \"initialize\"}}")
         init_res = await client.initialize()
-        console.print(f"  * [green]MCP Handshake Successful![/green] Server: {init_res.get('serverInfo', {}).get('name', 'unknown')}")
+        server_info = init_res.get('serverInfo', {})
+        console.print(f"  [{t_now()}] [bold green][HANDSHAKE PASSED][/bold green] Server acknowledged! Name: [white]{server_info.get('name', 'unknown')}[/white], Version: [white]{server_info.get('version', '1.0.0')}[/white]")
 
+        console.print(f"  [{t_now()}] [bold blue][TOOL DISCOVERY][/bold blue] Sending JSON-RPC: {{\"method\": \"tools/list\"}}")
         tools_list = await client.list_tools()
         tools = [t if isinstance(t, ToolDefinition) else ToolDefinition(**t) for t in tools_list]
-        console.print(f"  * Discovered [cyan]{len(tools)}[/cyan] declared tools: {', '.join([t.name for t in tools])}")
+        console.print(f"  [{t_now()}] [bold green][DISCOVERY PASSED][/bold green] Discovered [cyan]{len(tools)}[/cyan] declared tool(s): {', '.join([t.name for t in tools])}")
 
         # Step 4: Execute Dynamic Burst Probing
-        console.print("\n[bold yellow][Step 4/6] Executing Dynamic Burst Sweep Probes...[/bold yellow]")
+        console.print(f"\n[bold yellow][Step 4/6] Executing Dynamic Burst Sweep Probes...[/bold yellow]")
         scanner = OutputScanner(server_name)
 
         for tool in tools:
@@ -154,7 +162,7 @@ def run_sandbox_demo(target_path_str: str):
                     else:
                         sample_args[k] = "test"
 
-            console.print(f"  * Probing tool [bold cyan]{tool.name}[/bold cyan] with payload: [dim]{sample_args}[/dim]")
+            console.print(f"  [{t_now()}] [bold blue][CALLING TOOL][/bold blue] Executing tool [bold cyan]{tool.name}[/bold cyan] with input payload: [dim]{sample_args}[/dim]")
             try:
                 res = await client.call_tool(tool.name, sample_args)
                 raw_text = ""
@@ -163,30 +171,34 @@ def run_sandbox_demo(target_path_str: str):
                         raw_text += item.get("text", "")
                 tool_outputs.append(raw_text)
 
-                console.print(f"    <- Response payload received ({len(raw_text)} chars)")
+                console.print(f"  [{t_now()}]   <- [green]Tool returned output payload[/green] ({len(raw_text)} chars)")
                 if raw_text:
                     preview = raw_text.strip().replace("\n", " ")[:90]
-                    console.print(f"    <- Preview: [italic white]\"{preview}...\"[/italic white]")
+                    console.print(f"  [{t_now()}]   <- Preview: [italic white]\"{preview}...\"[/italic white]")
 
                 # Step 5: Output Scanner Inspection
                 out_findings = scanner.scan_output(tool.name, raw_text)
                 if out_findings:
                     for of in out_findings:
-                        console.print(f"    [bold red]! [TRIPWIRE TRIGGERED][/bold red] Category: [red]{of.category}[/red]")
-                        console.print(f"      Evidence: {of.evidence}")
+                        console.print(f"  [{t_now()}]   [bold red]! [ERROR DETECTED - TRIPWIRE FIRED][/bold red]")
+                        console.print(f"  [{t_now()}]     - Category: [red]{of.category}[/red]")
+                        console.print(f"  [{t_now()}]     - What Happened: {of.evidence}")
+                        console.print(f"  [{t_now()}]     - Why This is Malicious: The server smuggled canary secret tokens into markdown tags so the host agent/browser renders them to an external attacker!")
                         output_findings.append(of)
+                else:
+                    console.print(f"  [{t_now()}]   <- [bold green][PAYLOAD VERIFIED CLEAN][/bold green] Zero tracking pixels or covert markdown tags found in response.")
             except Exception as e:
-                console.print(f"    [dim]<- Tool execution handled: {e}[/dim]")
+                console.print(f"  [{t_now()}]   [dim]<- Tool execution handled: {e}[/dim]")
 
         await client.close()
 
     try:
         asyncio.run(_run_probes())
     except Exception as e:
-        console.print(f"[bold red]Probe execution warning:[/bold red] {e}")
+        console.print(f"[{t_now()}] [bold red]Probe execution warning:[/bold red] {e}")
 
     # Step 6: Inspect Kernel Syscall and Sink Traces
-    console.print("\n[bold yellow][Step 5/6] Inspecting Kernel Syscall & Canary Logs...[/bold yellow]")
+    console.print(f"\n[bold yellow][Step 5/6] Inspecting Kernel Syscall & Canary Logs...[/bold yellow]")
     strace_content = ""
     if strace_log_file.exists():
         strace_content = strace_log_file.read_text(encoding="utf-8", errors="replace")
@@ -209,20 +221,24 @@ def run_sandbox_demo(target_path_str: str):
     exfil_detected = len(output_findings) > 0 or any(f.category in ("DATA_EXFILTRATION", "MARKDOWN_EXFILTRATION") for f in canary_findings)
 
     if use_docker:
-        console.print(f"  * Total kernel syscalls recorded: [cyan]{len(strace_content.splitlines())}[/cyan] lines")
-        console.print(f"  * Unique files opened via [bold]openat[/bold]: [cyan]{len(behavior.openat_paths)}[/cyan]")
+        console.print(f"  [{t_now()}] [bold cyan][KERNEL TRACE PARSED][/bold cyan] Kernel recorded [cyan]{len(strace_content.splitlines())}[/cyan] total syscalls via Linux strace.")
+        console.print(f"  [{t_now()}]   - Unique files accessed via [bold]openat[/bold]: [cyan]{len(behavior.openat_paths)}[/cyan]")
         if behavior.openat_paths:
             for p in behavior.openat_paths[:4]:
-                console.print(f"    - openat: {p}")
+                console.print(f"      * openat: {p}")
         if network_connect:
-            console.print(f"  * [bold red]Network Socket Syscall Detected:[/bold red] [red]{behavior.connect_addrs}[/red]")
+            console.print(f"  [{t_now()}]   - [bold red]Network Socket Syscall Detected:[/bold red] [red]{behavior.connect_addrs}[/red]")
+            console.print(f"  [{t_now()}]     - What Happened: Server executed connect() to 127.0.0.1:8080.")
+            console.print(f"  [{t_now()}]     - Why This is Malicious: MCP tools must operate strictly over stdio. Outbound network sockets violate least-capability isolation!")
     else:
-        console.print("  * Host stdio mode: Tool output stream scanned directly for canary leaks.")
+        console.print(f"  [{t_now()}] Host stdio mode: Tool output stream scanned directly for canary leaks.")
 
     if canary_accessed:
-        console.print("  * [bold red]CANARY COMPROMISED:[/bold red] Process accessed [red]/tmp/canary_creds.env[/red]!")
+        console.print(f"  [{t_now()}]   - [bold red]CANARY COMPROMISED:[/bold red] Process accessed [red]/tmp/canary_creds.env[/red]!")
+        console.print(f"  [{t_now()}]     - What Happened: Process searched the disk and read the decoy honeypot credential file.")
+        console.print(f"  [{t_now()}]     - Why This is Malicious: Legitimate tools have no reason to access credential stores in /tmp.")
     else:
-        console.print("  * [bold green]CANARY SECURE:[/bold green] /tmp/canary_creds.env was NEVER accessed.")
+        console.print(f"  [{t_now()}]   - [bold green]CANARY SECURE:[/bold green] /tmp/canary_creds.env was NEVER accessed (0 reads).")
 
     # Step 7: Final Comparison Verdict Table
     console.print("\n[bold yellow][Step 6/6] S2 Sandbox Evaluation Verdict[/bold yellow]\n")
