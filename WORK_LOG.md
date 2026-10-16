@@ -140,3 +140,35 @@ All dependencies are installed in `.venv` and pinned in `requirements.txt`:
 │                                              │    • scripts/test_manifest.py (Scorecard)    │
 └──────────────────────────────────────────────┴──────────────────────────────────────────────┘
 ```
+
+---
+
+## 🛠️ Phase 2: Engine Development Log (Gaurang's Track)
+
+### Milestone 1: Local Ollama Qwen3 AI Judge (`s1_metadata/`) — ✅ COMPLETED & TESTED
+* `shadowprint/s1_metadata/prompt_guard.py`: Heuristic pre-filter for direct prompt injections, control tags, and Plane 14 tag characters (`\U000E0000-\U000E007F`).
+* `shadowprint/s1_metadata/qwen_judge.py`: Offline Ollama Qwen3 judge with `temperature=0.0`, `format="json"`, and strict add-only authority.
+* `tests/test_qwen_judge.py`: 5/5 tests passed in 27.96s.
+
+### Milestones 2 & 3: Container Sandbox & Guarded MCP Client — ✅ COMPLETED & TESTED
+* `docker/sink.py`: Silent HTTP sink on `127.0.0.1:8080` capturing egress payloads to `/obs/sink.log`.
+* `docker/entrypoint.sh`: Container supervisor managing background sink, planted canary decoy (`/tmp/canary_creds.env`), and clean stdio redirection of strace to `/obs/strace.log`.
+* `docker/Dockerfile.sandbox`: Built image `shadowprint-sandbox:latest`.
+* `shadowprint/client/mcp_client.py`: Async stdio JSON-RPC client with 5s timeout, sampling rejection (`sampling/createMessage`), and Layer 1 definition hashing.
+* `tests/test_docker_sandbox.py` & `tests/test_mcp_client.py`: 4/4 tests passed in 1.01s.
+
+### Milestone 4: Engine S2 Dynamic Prober & Kernel Syscalls — ✅ COMPLETED & TESTED
+* `shadowprint/s2_prober/syscall_parser.py`: Linux strace parser (`openat`, `connect`, `execve`), filtering runtime noise, computing 64-char `behavior_hash`.
+* `shadowprint/s2_prober/canary_tripwire.py`: Canary detection for file reads (`/tmp/canary_creds.env`) and value leaks (`CANARY_KEY_98721X`).
+* `shadowprint/s2_prober/output_scanner.py`: Output scanner for Markdown image exfil `![img](...)`, credentials, HTML tags, and base64 blobs.
+* `shadowprint/s2_prober/capability_model.py`: Mismatch detector between declared capabilities and observed syscalls.
+* `shadowprint/s2_prober/prober.py`: 10-call burst probe sweep orchestrator across target tools.
+* `tests/test_s2_prober.py`: 5/5 tests passed in 0.40s.
+
+### Milestone 5: Engine S3 Integrity & Pin-and-Diff — ✅ COMPLETED & TESTED
+* `shadowprint/s3_integrity/hasher.py`: 3-layer SHA-256 calculator (definition, artifact, behavior).
+* `shadowprint/s3_integrity/db.py`: SQLite manager (`shadowprint.db`) for pinned snapshots, history, and verification lookups.
+* `shadowprint/s3_integrity/differ.py`: Structural diff engine using `deepdiff`, with visual escaping of zero-width (`\u200b`, `\u200c`, etc.) and Unicode TAG characters (`\U000E0000-\U000E007F`).
+* `shadowprint/s3_integrity/watcher.py`: 2-second live polling loop with sub-1.5s rug-pull callback alerting.
+* `tests/test_s3_integrity.py`: 4/4 tests passed in 0.30s (Total test suite: 18/18 passing).
+
