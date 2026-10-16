@@ -38,3 +38,8 @@ desktop.ini
 # Environment Secrets (Never commit)
 .env
 *.env
+
+# Node.js & Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/

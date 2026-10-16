@@ -401,6 +401,38 @@ def info():
     )
 
 
+@app.command(name="dashboard")
+def dashboard(
+    host: str = typer.Option("127.0.0.1", "--host", "-h", help="Host interface to bind"),
+    port: int = typer.Option(8000, "--port", "-p", help="Port to listen on"),
+    reload: bool = typer.Option(False, "--reload", help="Enable auto-reload for development"),
+    open_browser: bool = typer.Option(True, "--open/--no-open", help="Automatically open browser on launch"),
+):
+    """Launch the Shadowprint Web Telemetry Dashboard & Security Command Center."""
+    import webbrowser
+    import uvicorn
+    from rich.panel import Panel
+
+    render_banner()
+    dashboard_url = f"http://{host}:{port}"
+    console.print(
+        Panel(
+            f"[bold green]Starting Shadowprint Web Dashboard...[/bold green]\n\n"
+            f"  * [bold cyan]Local URL:[/bold cyan]    [link={dashboard_url}]{dashboard_url}[/link]\n"
+            f"  * [bold cyan]API Docs:[/bold cyan]     [link={dashboard_url}/docs]{dashboard_url}/docs[/link]\n"
+            f"  * [bold cyan]Telemetry:[/bold cyan]    REST APIs & Real-Time Engine S0–S3 Telemetry\n\n"
+            f"[dim]Press Ctrl+C to terminate the dashboard server.[/dim]",
+            title="[bold cyan]Shadowprint Web Control Center[/bold cyan]",
+            border_style="green",
+        )
+    )
+
+    if open_browser:
+        webbrowser.open(dashboard_url)
+
+    uvicorn.run("shadowprint.web.app:app", host=host, port=port, reload=reload)
+
+
 def main():
     app()
 
