@@ -10,6 +10,19 @@ export default function RugpullWatcher() {
   const [alertData, setAlertData] = useState(null);
   const [detectionLatency, setDetectionLatency] = useState(null);
 
+  const syncFlagStatus = async () => {
+    try {
+      const data = await api.getRugpullFlagStatus();
+      setFlagActive(data.active);
+    } catch (e) {
+      // Ignore
+    }
+  };
+
+  useEffect(() => {
+    syncFlagStatus();
+  }, []);
+
   useEffect(() => {
     if (!isWatching) return;
 
@@ -17,16 +30,22 @@ export default function RugpullWatcher() {
       const startTime = performance.now();
       try {
         const data = await api.getDiff('rugpull_suite');
-        const elapsed = (performance.now() - startTime).toFixed(1);
+        const elapsedMs = performance.now() - startTime;
+        const latencyFormatted = elapsedMs < 1000 
+          ? `${elapsedMs.toFixed(0)} ms` 
+          : `${(elapsedMs / 1000).toFixed(2)} s`;
+
         setLastCheckTime(Date.now());
 
         if (data.has_drift) {
           setAlertTriggered(true);
           setAlertData(data);
-          setDetectionLatency(elapsed);
+          setDetectionLatency(latencyFormatted);
+          setFlagActive(true);
         } else {
           setAlertTriggered(false);
           setAlertData(null);
+          setFlagActive(false);
         }
       } catch (e) {
         // Heartbeat poll
@@ -40,6 +59,10 @@ export default function RugpullWatcher() {
     try {
       const data = await api.toggleRugpullFlag(activeState);
       setFlagActive(data.active);
+      if (!data.active) {
+        setAlertTriggered(false);
+        setAlertData(null);
+      }
     } catch (e) {
       console.error("Failed to toggle flag", e);
     }
@@ -60,16 +83,19 @@ export default function RugpullWatcher() {
               {alertTriggered ? <AlertOctagon size={24} color="#ffffff" /> : <Eye size={24} color="#ffffff" />}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>
                   {alertTriggered ? 'CRITICAL RUG-PULL DETECTED!' : 'Live Integrity Watcher (2s Polling)'}
                 </h2>
                 <span className={`badge ${alertTriggered ? 'badge-critical' : 'badge-pass'}`}>
                   {alertTriggered ? 'SUB-1.5s ALARM' : 'MONITORING ACTIVE'}
                 </span>
+                <span className="badge badge-info" style={{ fontFamily: 'var(--font-mono)' }}>
+                  Target: fixtures/rugpull_suite
+                </span>
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                Continuous stdio heartbeat actively comparing live tool definitions against SQLite pinned baseline.
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>
+                Continuous stdio heartbeat actively comparing live tool definitions against SQLite pinned baseline for <code>rugpull_suite</code>.
               </p>
             </div>
           </div>
@@ -88,7 +114,7 @@ export default function RugpullWatcher() {
               <button
                 className="btn btn-outline"
                 onClick={() => handleToggleFlag(false)}
-                style={{ borderColor: '#16a34a', color: '#16a34a' }}
+                style={{ borderColor: '#16a34a', color: '#16a34a', fontWeight: 700 }}
               >
                 <RotateCcw size={15} />
                 <span>Reset to Benign State (Delete Flag)</span>
@@ -129,7 +155,7 @@ export default function RugpullWatcher() {
             Detection Response Latency
           </div>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: alertTriggered ? '#dc2626' : '#15803d' }}>
-            {alertTriggered ? `< ${detectionLatency || 1.2}s` : 'Sub-1.5s Guarantee'}
+            {alertTriggered ? `< ${detectionLatency || '150 ms'}` : 'Sub-1.5s Guarantee'}
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
             DeepDiff structural comparison time

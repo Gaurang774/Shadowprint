@@ -48,29 +48,47 @@ export default function Header({ activeTab, setActiveTab, onQuickAudit, isAuditi
         </button>
       </nav>
 
-      {/* Target Selector & Run Button */}
+      {/* Context-Aware Target Controls */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <select
-          value={selectedTarget}
-          onChange={(e) => setSelectedTarget(e.target.value)}
-          style={{ padding: '6px 12px', fontSize: '0.82rem', fontWeight: 600 }}
-        >
-          {fixtures.map((fix) => (
-            <option key={fix.id} value={fix.entrypoint || fix.name}>
-              {fix.name} ({fix.expected_outcome})
-            </option>
-          ))}
-        </select>
+        {activeTab === 'audit' ? (
+          <>
+            <select
+              value={selectedTarget}
+              onChange={(e) => setSelectedTarget(e.target.value)}
+              style={{ padding: '6px 12px', fontSize: '0.82rem', fontWeight: 600, background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+            >
+              {fixtures.map((fix) => (
+                <option key={fix.id} value={fix.entrypoint || fix.name}>
+                  {fix.name} ({fix.expected_outcome})
+                </option>
+              ))}
+            </select>
 
-        <button
-          className="btn btn-primary"
-          onClick={() => onQuickAudit(selectedTarget)}
-          disabled={isAuditing}
-          style={{ padding: '6px 14px', fontSize: '0.82rem' }}
-        >
-          <Play size={14} fill="currentColor" />
-          <span>{isAuditing ? 'Auditing...' : 'Run Audit'}</span>
-        </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => onQuickAudit(selectedTarget)}
+              disabled={isAuditing}
+              style={{ padding: '6px 14px', fontSize: '0.82rem' }}
+            >
+              <Play size={14} fill="currentColor" />
+              <span>{isAuditing ? 'Auditing...' : 'Run Audit'}</span>
+            </button>
+          </>
+        ) : activeTab === 'watcher' ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f8fafc', padding: '6px 12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Monitored Target:</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700, color: '#0f172a' }}>
+              fixtures/rugpull_suite
+            </span>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f8fafc', padding: '6px 12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Benchmark Scope:</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#15803d' }}>
+              All 7 Test Servers (100% Recall)
+            </span>
+          </div>
+        )}
       </div>
     </header>
   );

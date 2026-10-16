@@ -64,6 +64,12 @@ export const api = {
   },
 
   // Rug-Pull simulation flag
+  async getRugpullFlagStatus() {
+    const res = await fetch('/api/trigger-rugpull');
+    if (!res.ok) throw new Error('Failed to fetch flag status');
+    return res.json();
+  },
+
   async toggleRugpullFlag(active) {
     const res = await fetch('/api/trigger-rugpull', {
       method: 'POST',

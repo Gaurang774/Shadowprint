@@ -342,6 +342,19 @@ def toggle_rugpull_flag(req: TriggerRugpullRequest) -> Dict[str, Any]:
     }
 
 
+@router.get("/trigger-rugpull")
+def get_rugpull_flag_status() -> Dict[str, Any]:
+    """Returns current active status of the rugpull simulation flag."""
+    temp_dir = Path(tempfile.gettempdir())
+    flag_file = temp_dir / "rugpull_trigger.flag"
+    is_active = flag_file.exists()
+    return {
+        "active": is_active,
+        "flag_path": str(flag_file),
+        "message": "Rugpull trigger flag ACTIVE" if is_active else "Rugpull trigger flag REMOVED (benign state)",
+    }
+
+
 @router.get("/diff/{server_name}")
 async def get_server_diff(server_name: str) -> Dict[str, Any]:
     """Performs deep cryptographic diff between approved pin and live server snapshot."""
