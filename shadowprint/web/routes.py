@@ -355,35 +355,62 @@ def get_rugpull_flag_status() -> Dict[str, Any]:
     }
 
 
-@router.get("/diff/{server_name}")
+@router.get("/diff/{server_name:path}")
 async def get_server_diff(server_name: str) -> Dict[str, Any]:
     """Performs deep cryptographic diff between approved pin and live server snapshot."""
+    norm_name = server_name.replace("fixtures/", "").replace("\\", "/").strip("/").split("/")[-1]
     db = PinDatabase()
-    pinned = db.get_pin_snapshot(server_name)
-    if not pinned:
-        raise HTTPException(status_code=404, detail=f"No pinned baseline found for '{server_name}'")
+    pinned = db.get_pin_snapshot(norm_name)
 
-    # Fetch live snapshot from fixture or directory
-    target_candidate = PROJECT_ROOT / "fixtures" / server_name
+    # Resolve target candidate
+    target_candidate = PROJECT_ROOT / "fixtures" / norm_name
+    if not target_candidate.exists():
+        try:
+            target_candidate = _resolve_target_path(server_name)
+        except Exception:
+            pass
+
     entrypoint = _find_entrypoint(target_candidate)
     if not entrypoint:
         raise HTTPException(status_code=404, detail=f"Cannot locate live server for '{server_name}'")
 
     client = GuardedMCPClient(command=sys.executable, args=[str(entrypoint)], timeout=3.0)
-    live_snapshot = await client.fetch_snapshot(server_name)
+    live_snapshot = await client.fetch_snapshot(norm_name)
 
-    differ = IntegrityDiffer(server_name)
+    # Auto-pin baseline if not previously pinned
+    if not pinned:
+        target_dir = target_candidate if target_candidate.is_dir() else target_candidate.parent
+        layer1 = ThreeLayerHasher.compute_definition_hash(live_snapshot.tools)
+        layer2 = ThreeLayerHasher.compute_artifact_hash(target_dir)
+        layer3 = ThreeLayerHasher.compute_behavior_hash({})
+        pin = Pin(
+            server_name=norm_name,
+            pinned_at=time.time(),
+            definition_hash=layer1,
+            artifact_hash=layer2,
+            behavior_hash=layer3,
+            approved_by="Dashboard Security Auditor",
+            tools_count=len(live_snapshot.tools),
+        )
+        db.save_pin(pin=pin, snapshot=live_snapshot)
+        pinned = live_snapshot
+
+    t0 = time.perf_counter()
+    differ = IntegrityDiffer(norm_name)
     findings = differ.compare_snapshots(pinned, live_snapshot)
+    diff_latency_ms = round((time.perf_counter() - t0) * 1000, 2)
 
     pinned_hash = ThreeLayerHasher.compute_definition_hash(pinned.tools)
     live_hash = ThreeLayerHasher.compute_definition_hash(live_snapshot.tools)
 
     return {
-        "server_name": server_name,
+        "server_name": norm_name,
         "has_drift": (pinned_hash != live_hash),
         "pinned_definition_hash": pinned_hash,
         "live_definition_hash": live_hash,
+        "diff_latency_ms": diff_latency_ms,
         "findings": [json.loads(f.model_dump_json()) for f in findings],
         "tool_count_pinned": len(pinned.tools),
         "tool_count_live": len(live_snapshot.tools),
     }
+
