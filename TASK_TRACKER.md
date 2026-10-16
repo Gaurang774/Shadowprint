@@ -74,11 +74,11 @@
 - [x] `shadowprint/s3_integrity/hasher.py` (3-layer SHA-256 calculator)
 - [x] `shadowprint/s3_integrity/watcher.py` (2-second polling loop)
 - [x] `shadowprint/s3_integrity/differ.py` (`deepdiff` with escaped non-printables)
-- [ ] `fixtures/clean_fetch/server.py` (Fixture 1b: Clean fetch control)
-- [ ] `fixtures/exfil_calculator/server.py` (Fixture 4: Obfuscated key theft + sink egress)
-- [ ] `fixtures/rugpull_suite/server.py` (Fixture 5: Live touch flag definition flipper)
-- [ ] `manifest/shadowprint_fixture_manifest.json` (Expected findings ground truth)
-- [ ] `scripts/test_manifest.py` (Automated scorecard & recall validator)
+- [x] `fixtures/clean_fetch/server.py` (Fixture 1b: Clean fetch control)
+- [x] `fixtures/exfil_calculator/server.py` (Fixture 4: Obfuscated key theft + sink egress)
+- [x] `fixtures/rugpull_suite/server.py` (Fixture 5: Live touch flag definition flipper)
+- [x] `manifest/shadowprint_fixture_manifest.json` (Expected findings ground truth)
+- [x] `scripts/test_manifest.py` (Automated scorecard & recall validator)
 - [x] `scripts/preflight_check.py` (Docker & Ollama sanity validator)
 
 ---
@@ -87,10 +87,10 @@
 
 | Fixture | Expected Caught Issues | Catching Engine | Pass Criteria | Status |
 |---|---|---|---|---|
-| `clean_notes` | None | None | 0 False Positives | ⏳ Not tested |
-| `clean_fetch` | None | None | 0 False Positives | ⏳ Not tested |
-| `poisoned_weather` | Prompt injection in description | S1 (Deterministic + Qwen3) | Caught & quoted | ⏳ Not tested |
-| `vulnerable_runner` | `shell=True` + hardcoded AWS secret | S0 (Bandit + Gitleaks) | Exact line flagged | ⏳ Not tested |
-| `exfil_calculator` | Canary file read + localhost egress | S2 (Syscall + Sink) | Exfil confirmed | ⏳ Not tested |
-| `rugpull_suite` | Definition mutation upon flag touch | S3 (Watcher + Diff) | Alert in $<1.5$s | ⏳ Not tested |
-| `attack_the_auditor` | `#nosec` / `#nosemgrep` bypass attempts | S0/S1 Hardening | `TAMPER_ATTEMPT` | ⏳ Not tested |
+| `clean_notes` | None | None | 0 False Positives | ⏳ Pending Builder A |
+| `clean_fetch` | None | None | 0 False Positives | ✅ VERIFIED (0 FP) |
+| `poisoned_weather` | Prompt injection in description | S1 (Deterministic + Qwen3) | Caught & quoted | ⏳ Pending Builder A |
+| `vulnerable_runner` | `shell=True` + hardcoded AWS secret | S0 (Bandit + Gitleaks) | Exact line flagged | ⏳ Pending Builder A |
+| `exfil_calculator` | Canary file read + localhost egress | S2 (Syscall + Sink) | Exfil confirmed | ✅ VERIFIED (Caught) |
+| `rugpull_suite` | Definition mutation upon flag touch | S3 (Watcher + Diff) | Alert in $<1.5$s | ✅ VERIFIED (Caught) |
+| `attack_the_auditor` | `#nosec` / `#nosemgrep` bypass attempts | S0/S1 Hardening | `TAMPER_ATTEMPT` | ⏳ Pending Builder A |

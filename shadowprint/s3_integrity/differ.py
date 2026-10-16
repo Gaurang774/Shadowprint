@@ -48,6 +48,14 @@ def escape_hidden_characters(text: str) -> str:
         return f"[U+{code_point:05X} UNICODE-TAG]"
 
     text = re.sub(r"[\U000E0000-\U000E007F]", tag_replacer, text)
+    # Also handle UTF-16 surrogate pairs produced by json.dumps on Windows: \udb40\udcXX
+    def surrogate_replacer(match):
+        low_hex = match.group(1)
+        low_val = int(low_hex, 16)
+        tag_val = 0xE0000 + low_val
+        return f"[U+{tag_val:05X} UNICODE-TAG]"
+
+    text = re.sub(r"\\u[dD][bB]40\\u[dD][cC]([0-9a-fA-F]{2})", surrogate_replacer, text)
     # Also handle escaped \uE000 or \U000E00...
     text = re.sub(r"\\u[eE]([0-9a-fA-F]{3})", r"[U+E\1 UNICODE-TAG]", text)
     text = re.sub(r"\\U000[eE]([0-9a-fA-F]{4})", r"[U+E\1 UNICODE-TAG]", text)

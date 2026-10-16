@@ -170,5 +170,18 @@ All dependencies are installed in `.venv` and pinned in `requirements.txt`:
 * `shadowprint/s3_integrity/db.py`: SQLite manager (`shadowprint.db`) for pinned snapshots, history, and verification lookups.
 * `shadowprint/s3_integrity/differ.py`: Structural diff engine using `deepdiff`, with visual escaping of zero-width (`\u200b`, `\u200c`, etc.) and Unicode TAG characters (`\U000E0000-\U000E007F`).
 * `shadowprint/s3_integrity/watcher.py`: 2-second live polling loop with sub-1.5s rug-pull callback alerting.
-* `tests/test_s3_integrity.py`: 4/4 tests passed in 0.30s (Total test suite: 18/18 passing).
+* `tests/test_s3_integrity.py`: 4/4 tests passed in 0.30s.
+
+### Milestone 6: Gaurang's Benchmark Fixtures — ✅ COMPLETED & TESTED
+* `fixtures/clean_fetch/server.py`: Negative control MCP server (0 false positives).
+* `fixtures/exfil_calculator/server.py`: Obfuscated calculator attempting `/tmp/canary_creds.env` read and HTTP sink exfiltration.
+* `fixtures/rugpull_suite/server.py`: Tool definition flipper triggered by `/tmp/rugpull_trigger.flag`.
+* `tests/test_gaurang_fixtures.py`: 3/3 tests passed in 1.59s.
+
+### Milestone 7: Benchmark Manifest & Automated Scorecard Validator — ✅ COMPLETED & TESTED
+* `manifest/shadowprint_fixture_manifest.json`: Ground truth recall and false positive benchmarks for all 7 fixtures.
+* `scripts/test_manifest.py`: Scorecard validator asserting 100% precision and core recall across active fixtures.
+* Verification result: 3/3 active fixtures passing (`clean_fetch` 0 FP, `exfil_calculator` caught exfil, `rugpull_suite` caught schema drift in sub-second).
+* Test suite health: 21/21 tests passed (100% green).
+
 

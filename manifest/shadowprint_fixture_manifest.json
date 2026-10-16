@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "manifest_name": "Shadowprint Benchmark Ground Truth Matrix",
+  "description": "Formal acceptance benchmarks and target recall criteria for the 7 official benchmark fixtures.",
+  "fixtures": [
+    {
+      "id": "F1",
+      "name": "clean_notes",
+      "path": "fixtures/clean_notes",
+      "entrypoint": "fixtures/clean_notes/server.py",
+      "description": "Benign notes management MCP server. Clean baseline.",
+      "owner": "Jasjyot",
+      "expected_outcome": "PASS",
+      "target_engines": [],
+      "min_findings": 0,
+      "max_findings": 0,
+      "expected_categories": [],
+      "notes": "Negative control. Must trigger zero false positives across S0, S1, S2, and S3."
+    },
+    {
+      "id": "F1b",
+      "name": "clean_fetch",
+      "path": "fixtures/clean_fetch",
+      "entrypoint": "fixtures/clean_fetch/server.py",
+      "description": "Benign safe URL content fetcher. Clean baseline.",
+      "owner": "Gaurang",
+      "expected_outcome": "PASS",
+      "target_engines": [],
+      "min_findings": 0,
+      "max_findings": 0,
+      "expected_categories": [],
+      "notes": "Negative control. Must trigger zero false positives across S0, S1, S2, and S3."
+    },
+    {
+      "id": "F2",
+      "name": "poisoned_weather",
+      "path": "fixtures/poisoned_weather",
+      "entrypoint": "fixtures/poisoned_weather/server.py",
+      "description": "Weather service hiding prompt injection via Unicode Plane 14 tag steganography.",
+      "owner": "Jasjyot",
+      "expected_outcome": "FAIL",
+      "target_engines": ["S1"],
+      "min_findings": 1,
+      "max_findings": 5,
+      "expected_categories": [
+        "PROMPT_INJECTION",
+        "UNICODE_TAG_STEGANOGRAPHY"
+      ],
+      "notes": "Must extract exact injected instruction quote and flag as CRITICAL."
+    },
+    {
+      "id": "F3",
+      "name": "vulnerable_runner",
+      "path": "fixtures/vulnerable_runner",
+      "entrypoint": "fixtures/vulnerable_runner/server.py",
+      "description": "Command execution server with shell=True vulnerability and hardcoded AWS credentials.",
+      "owner": "Jasjyot",
+      "expected_outcome": "FAIL",
+      "target_engines": ["S0"],
+      "min_findings": 2,
+      "max_findings": 6,
+      "expected_categories": [
+        "COMMAND_INJECTION",
+        "HARDCODED_SECRET"
+      ],
+      "notes": "Static AST Bandit (B602/B603) and Gitleaks secrets detection."
+    },
+    {
+      "id": "F4",
+      "name": "exfil_calculator",
+      "path": "fixtures/exfil_calculator",
+      "entrypoint": "fixtures/exfil_calculator/server.py",
+      "description": "Math calculator that covertly reads /tmp/canary_creds.env and transmits to localhost sink.",
+      "owner": "Gaurang",
+      "expected_outcome": "FAIL",
+      "target_engines": ["S2"],
+      "min_findings": 1,
+      "max_findings": 6,
+      "expected_categories": [
+        "CREDENTIAL_ACCESS",
+        "DATA_EXFILTRATION",
+        "DATA_LEAKAGE"
+      ],
+      "notes": "Dynamic kernel syscall prober detecting openat on canary file and connect to 127.0.0.1:8080."
+    },
+    {
+      "id": "F5",
+      "name": "rugpull_suite",
+      "path": "fixtures/rugpull_suite",
+      "entrypoint": "fixtures/rugpull_suite/server.py",
+      "description": "Benign tool that mutates its definition to inject prompts when /tmp/rugpull_trigger.flag exists.",
+      "owner": "Gaurang",
+      "expected_outcome": "FAIL",
+      "target_engines": ["S3"],
+      "min_findings": 1,
+      "max_findings": 4,
+      "expected_categories": [
+        "RUG_PULL_SCHEMA_MUTATION"
+      ],
+      "notes": "Integrity watcher detecting definition drift and rendering escaped visual character diff in <1.5s."
+    },
+    {
+      "id": "F6",
+      "name": "attack_the_auditor",
+      "path": "fixtures/attack_the_auditor",
+      "entrypoint": "fixtures/attack_the_auditor/server.py",
+      "description": "Hostile server attempting to suppress linter warnings via #nosec and #nosemgrep directives.",
+      "owner": "Jasjyot",
+      "expected_outcome": "FAIL",
+      "target_engines": ["S0", "S1"],
+      "min_findings": 1,
+      "max_findings": 4,
+      "expected_categories": [
+        "STATIC_TAMPER_ATTEMPT"
+      ],
+      "notes": "Auditor self-defense checks must flag hostile suppression attempts with confirmed confidence."
+    }
+  ]
+}
