@@ -120,19 +120,22 @@ The codebase is split cleanly between two co-builders. Code within one builder's
   - `shadowprint/cli.py` (Typer CLI orchestrator)
   - `shadowprint/normalizer.py` (Finding deduplication)
   - `shadowprint/s0_static/*` (Bandit AST, Semgrep taint, Gitleaks, suppression check)
-  - `shadowprint/s1_metadata/*` (Deterministic regex, Qwen3 Ollama judge)
-  - `shadowprint/s4_reporting/markdown_reporter.py`
-  - `shadowprint/s4_reporting/terminal_ui.py`
-  - `fixtures/clean_notes/*`, `fixtures/poisoned_weather/*`, `fixtures/vulnerable_runner/*`
+  - `shadowprint/s1_metadata/analyzer.py` (S1 Orchestrator)
+  - `shadowprint/s1_metadata/deterministic_rules.py` (Deterministic regex, Unicode TAGs)
+  - `shadowprint/s4_reporting/markdown_reporter.py` (Markdown report)
+  - `shadowprint/s4_reporting/terminal_ui.py` (Rich matrix & live status cards)
+  - `shadowprint/s4_reporting/sarif_exporter.py` (SARIF 2.1.0 standard exporter — Jasjyot owns all reports!)
+  - `fixtures/clean_notes/*`, `fixtures/poisoned_weather/*`, `fixtures/vulnerable_runner/*`, `fixtures/attack_the_auditor/*`
   - `scripts/trigger_rugpull.py`
 * **Gaurang Udgirkar's Modules (`feat/gaurang`):**
   - `shadowprint/models.py` (Shared contract — frozen together)
+  - `shadowprint/s1_metadata/qwen_judge.py` (Ollama Qwen3-8B caller, temperature 0, add-only Pydantic JSON judge)
+  - `shadowprint/s1_metadata/prompt_guard.py` (Optional prompt injection pre-filter)
   - `shadowprint/client/mcp_client.py` (Guarded least-capability stdio client)
-  - `shadowprint/s2_prober/*` (Burst probe, capability model, canary tripwire, strace parser)
-  - `shadowprint/s3_integrity/*` (SQLite store, 3-layer SHA-256, watcher loop, deepdiff)
-  - `shadowprint/s4_reporting/sarif_exporter.py` (SARIF 2.1.0 standard exporter)
   - `docker/*` (`Dockerfile.sandbox`, `entrypoint.sh`, `sink.py`)
-  - `fixtures/clean_fetch/*`, `fixtures/exfil_calculator/*`, `fixtures/rugpull_suite/*`, `fixtures/attack_the_auditor/*`
+  - `shadowprint/s2_prober/*` (Burst probe, capability model, canary tripwire, strace parser, output scanner)
+  - `shadowprint/s3_integrity/*` (SQLite store, 3-layer SHA-256, watcher loop, deepdiff)
+  - `fixtures/clean_fetch/*`, `fixtures/exfil_calculator/*`, `fixtures/rugpull_suite/*`
   - `scripts/test_manifest.py`, `scripts/preflight_check.py`, `manifest/*`
 
 ---
