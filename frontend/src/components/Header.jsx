@@ -1,10 +1,7 @@
 import React from 'react';
-import { Shield, Activity, Database, Eye, Award, Server } from 'lucide-react';
+import { Shield, Play, Activity, Flame, Award } from 'lucide-react';
 
-export default function Header({ activeTab, setActiveTab, systemStatus, onQuickAudit, isAuditing }) {
-  const dockerOnline = systemStatus?.docker?.daemon_running;
-  const ollamaOnline = systemStatus?.ollama?.online;
-
+export default function Header({ activeTab, setActiveTab, onQuickAudit, isAuditing, selectedTarget, setSelectedTarget, fixtures }) {
   return (
     <header className="header-nav">
       <div className="brand-badge">
@@ -24,30 +21,22 @@ export default function Header({ activeTab, setActiveTab, systemStatus, onQuickA
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <nav style={{ display: 'flex', gap: '4px' }}>
+      {/* 3 Simple Judge-Friendly Tabs */}
+      <nav style={{ display: 'flex', gap: '8px' }}>
         <button
           className={`tab-btn ${activeTab === 'audit' ? 'active' : ''}`}
           onClick={() => setActiveTab('audit')}
         >
           <Activity size={15} />
-          <span>Audit Scanner</span>
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === 'diff' ? 'active' : ''}`}
-          onClick={() => setActiveTab('diff')}
-        >
-          <Database size={15} />
-          <span>S3 Baseline & Diff</span>
+          <span>1. How Engines Work (Audit)</span>
         </button>
 
         <button
           className={`tab-btn ${activeTab === 'watcher' ? 'active' : ''}`}
           onClick={() => setActiveTab('watcher')}
         >
-          <Eye size={15} />
-          <span>Rug-Pull Watcher</span>
+          <Flame size={15} />
+          <span>2. Live Rug-Pull Demo</span>
         </button>
 
         <button
@@ -55,42 +44,31 @@ export default function Header({ activeTab, setActiveTab, systemStatus, onQuickA
           onClick={() => setActiveTab('scorecard')}
         >
           <Award size={15} />
-          <span>Scorecard (100%)</span>
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === 'health' ? 'active' : ''}`}
-          onClick={() => setActiveTab('health')}
-        >
-          <Server size={15} />
-          <span>Engines & Docker</span>
+          <span>3. 7-Server Scorecard (100%)</span>
         </button>
       </nav>
 
-      {/* Clean Status Pills */}
+      {/* Target Selector & Run Button */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div className="glass-card" style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem' }}>
-          <span className={`pulse-dot ${dockerOnline ? 'green' : 'cyan'}`}></span>
-          <span style={{ color: 'var(--text-secondary)' }}>Docker:</span>
-          <strong style={{ color: dockerOnline ? '#15803d' : '#0f172a' }}>
-            {dockerOnline ? 'ONLINE' : 'HOST'}
-          </strong>
-        </div>
-
-        <div className="glass-card" style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem' }}>
-          <span className={`pulse-dot ${ollamaOnline ? 'green' : 'cyan'}`}></span>
-          <span style={{ color: 'var(--text-secondary)' }}>Qwen3 AI:</span>
-          <strong style={{ color: ollamaOnline ? '#15803d' : '#0f172a' }}>
-            {ollamaOnline ? 'LOCAL' : 'OFFLINE'}
-          </strong>
-        </div>
+        <select
+          value={selectedTarget}
+          onChange={(e) => setSelectedTarget(e.target.value)}
+          style={{ padding: '6px 12px', fontSize: '0.82rem', fontWeight: 600 }}
+        >
+          {fixtures.map((fix) => (
+            <option key={fix.id} value={fix.entrypoint || fix.name}>
+              {fix.name} ({fix.expected_outcome})
+            </option>
+          ))}
+        </select>
 
         <button
           className="btn btn-primary"
-          onClick={onQuickAudit}
+          onClick={() => onQuickAudit(selectedTarget)}
           disabled={isAuditing}
           style={{ padding: '6px 14px', fontSize: '0.82rem' }}
         >
+          <Play size={14} fill="currentColor" />
           <span>{isAuditing ? 'Auditing...' : 'Run Audit'}</span>
         </button>
       </div>
