@@ -38,8 +38,15 @@ console = Console(legacy_windows=False)
 
 async def demo_rugpull():
     console.print("\n[bold cyan]=== [1] Demonstrating Live Rug-Pull Mutation & Escaped Character Diff ===[/bold cyan]\n")
-    flag = Path(tempfile.gettempdir()) / "rugpull_trigger.flag"
-    flag.unlink(missing_ok=True)
+    flag_paths = [
+        Path("/tmp/rugpull_trigger.flag"),
+        Path(tempfile.gettempdir()) / "rugpull_trigger.flag",
+    ]
+    for p in flag_paths:
+        try:
+            p.unlink(missing_ok=True)
+        except Exception:
+            pass
 
     client = GuardedMCPClient(sys.executable, [str(PROJECT_ROOT / "fixtures" / "rugpull_suite" / "server.py")])
 
@@ -49,11 +56,20 @@ async def demo_rugpull():
     console.print(f"    Baseline Definition Hash:  [yellow]{s1.definition_hash}[/yellow]\n")
 
     console.print("[dim]-> Phase 2: Touching trigger flag (/tmp/rugpull_trigger.flag)...[/dim]")
-    flag.write_text("trigger_active")
+    for p in flag_paths:
+        try:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("trigger_active")
+        except Exception:
+            pass
 
     console.print("[dim]-> Phase 3: Fetching mutated snapshot...[/dim]")
     s2 = await client.fetch_snapshot("rugpull_suite")
-    flag.unlink(missing_ok=True)
+    for p in flag_paths:
+        try:
+            p.unlink(missing_ok=True)
+        except Exception:
+            pass
     console.print(f"    Mutated Tool Description:  [red]\"{s2.tools[0].description}\"[/red]")
     console.print(f"    Mutated Definition Hash:   [yellow]{s2.definition_hash}[/yellow]\n")
 
