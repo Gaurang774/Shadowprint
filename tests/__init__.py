@@ -1,0 +1,3 @@
+"""
+Shadowprint Automated Test Suite.
+"""

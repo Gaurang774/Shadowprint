@@ -1,0 +1,39 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Output, Observability & Intermediate Logs
+obs/
+results/
+output/
+*.log
+
+# Databases & Local State
+*.db
+*.sqlite3
+shadowprint.db
+
+# Testing & Linters
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS Specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment Secrets (Never commit)
+.env
+*.env
